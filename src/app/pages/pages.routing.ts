@@ -1,40 +1,23 @@
 import { Routes } from '@angular/router';
 
-// import { QuotationAddComponent } from './quotation/quotation-add/quotation-add.component';
+import { AgentComponent } from './agent/agent.component';
 
-
+import { BankComponent } from './bank/bank.component';
+import { MainDashboardComponent } from './dashboards/main-dashboard/main-dashboard.component';
 
 export const PAGE_ROUTES: Routes = [
-    // {
-    //     path: 'add',
-    //     component: QuotationAddComponent
-    // },
-    // {
-    //     path: 'searchQuote',
-    //     component: QuotationSearchComponent
-    // },
-    // {
-    //     path: 'reviseQuote/:SeqId',
-    //     component: QuotationReviseComponent
-    // },
-    // {
-    //     path: 'proposalReg',
-    //     component: ProposalRegisterComponent
-    // },
-    // {
-    //     path: 'proposalUpdate/:SeqId',
-    //     component: ProposalUpdateComponent
-    // },
-    // {
-    //     path: 'pendingProposals',
-    //     component: PendingProposalsComponent
-    // },
-    // {
-    //     path: 'mainDashboard',
-    //     component: MainDashboardComponent
-    // }
-
-
+    {
+        path: 'agent',
+        component: AgentComponent
+    },
+    {
+        path: 'bank',
+        component: BankComponent
+    },
+    {
+        path: 'mainDashboard',
+        component: MainDashboardComponent
+    }
     
 
 

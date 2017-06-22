@@ -1,0 +1,53 @@
+.img {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 150px;
+}
+.AgentImage{
+    background-image: url("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQQnGpi8c34iR5ZR02q00o_3joYL0KwJQ-nmUsYAKFYos6q9422")!important;
+    background-size: cover;
+    width:250px;
+    height: 250px;
+    margin-left: 28 px;
+    border-color: red;
+    border: 1px;
+    background-repeat: no-repeat;
+}
+
+
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    /*padding: 8px 16px;*/
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 2px 1px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+    width: 100px;
+    height: 30px;
+}
+
+
+
+.button2 {
+    background-color: white; 
+    color: black; 
+    border: 2px solid #008CBA;
+}
+
+.button2:hover {
+    background-color: #008CBA;
+    color: white;
+}
+
+.wellnew{
+background-color:rgba(darkblue)!important;
+}
+
+

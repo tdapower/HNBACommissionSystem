@@ -11,18 +11,19 @@ import { ToastrModule } from 'toastr-ng2';
 import { NgUploaderModule } from 'ngx-uploader';
 import { Ng2PaginationModule } from 'ng2-pagination';
 import { ModalModule } from "ng2-modal";
-// import { Md2DatepickerModule } from 'md2-datepicker';
 
 import { routes } from './app.router';
-// import { QuotationService } from './shared/services/quotation/quotation.service';
-// import { CommonService } from './shared/services/common/common.service';
-// import { ProposalUpdateService } from './shared/services/proposal-update/proposal-update.service';
-// import { ProposalRegisterService } from './shared/services/proposal-register/proposal-register.service';
-// import { AssureService } from './shared/services/assure/assure.service';
+import { AgentService } from './shared/services/Agent/Agent.service';
+import { AgentCodeService } from './shared/services/AgentCode/AgentCode.service';
+import { AgentTypeService } from './shared/services/AgentType/AgentType.service';
+import { BankService } from './shared/services/bank/bank.service';
+import { BankBranchService } from './shared/services/bankBranch/bankBranch.service';
+import { BranchService } from './shared/services/branch/branch.service';
 
 
-// import { QuotationAddComponent } from './pages/quotation/quotation-add/quotation-add.component';
-// import { ProposalRegisterComponent } from './pages/proposal/proposal-register/proposal-register.component';
+import { AgentComponent } from './pages/agent/agent.component';
+import { BankComponent } from './pages/bank/bank.component';
+
 import { UserLoginComponent } from './pages/user/user-login/user-login.component';
 import { LayoutComponent } from './layout/layout/layout.component';
 
@@ -30,28 +31,20 @@ import { AuthenticationService } from './shared/services/user/authentication.ser
 import { AuthGuard } from '../app/authGuard';
 import { SpinnerLargeComponent } from './layout/spinner-large/spinner-large.component';
 import { SpinnerTopComponent } from './layout/spinner-top/spinner-top.component';
-// import { QuotationSearchComponent } from './pages/quotation/quotation-search/quotation-search.component';
-// import { ProposalUpdateComponent } from './pages/proposal/proposal-update/proposal-update.component';
-// import { QuotationReviseComponent } from './pages/quotation/quotation-revise/quotation-revise.component';
-// import { PendingProposalsComponent } from './pages/proposal/pending-proposals/pending-proposals.component';
-// import { MainDashboardComponent } from './pages/dashboards/main-dashboard/main-dashboard.component';
-import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome'
+import { MainDashboardComponent } from './pages/dashboards/main-dashboard/main-dashboard.component';
+import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
-    // QuotationAddComponent,
-    // ProposalRegisterComponent,
+    AgentComponent,
+    BankComponent,
     UserLoginComponent,
     LayoutComponent,
     SpinnerLargeComponent,
     SpinnerTopComponent,
-    // QuotationSearchComponent,
-    // ProposalUpdateComponent,
-    // QuotationReviseComponent,
-    // PendingProposalsComponent,
-    // MainDashboardComponent
+    MainDashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -68,14 +61,14 @@ import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawe
     
   ],
   providers: [
-    // QuotationService,
+    AgentService,
     AuthenticationService,
     AuthGuard,
-    // CommonService,
-    // ProposalRegisterService,
-    // ProposalUpdateService,
-    // ProposalRegisterComponent,
-    // AssureService
+    AgentCodeService,
+    AgentTypeService,
+    BankService,
+    BankBranchService,
+    BranchService
     ],
 
 
