@@ -24,7 +24,7 @@ export class AuthenticationService {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
 
-        return this.http.get(URL_CONST.URL_PREFIX + 'api/UserAccount/GetWindowsUserName', options)
+        return this.http.get(URL_CONST.URL_PREFIX1 + 'api/UserAccount/GetWindowsUserName', options)
             .map(res => res)
             .timeout(60000)
             .catch((error: any) => {

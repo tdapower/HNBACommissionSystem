@@ -1,5 +1,6 @@
 export interface IAgent {
     AGT_ID: number;
+    AGT_CODE : string;
     AGT_CODE_ID: number;
     AGT_TYPE_ID: number;
     AGT_MDRT_STATUS : number;
@@ -62,5 +63,9 @@ export interface IAgent {
     AGT_RETAINER_AMOUNT: number;
     AGT_RETAINER_GIVEN_DATE: Date;
     AGT_RETAINER_CLOSE_DATE: Date;
+    AGT_LEADER_AGENT_CODE_V: string;
+    AGT_LEADER_LEADER_CODE_V: string;
+    AGT_LEADER_AGENT_CODE_H: string;
+    AGT_LEADER_LEADER_CODE_H: string;
 
 }
