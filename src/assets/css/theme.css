@@ -1849,7 +1849,8 @@ pre {
 
 @media (min-width:1200px) {
     .container {
-        width: 1170px;
+        /*width: 1170px;*/
+        width: 1300px;
     }
 }
 
@@ -7295,7 +7296,7 @@ table-bordered > thead > tr > th, .table-bordered > thead > tr > th, table-borde
 }
 
 .form-control, input {
-    border-width: 2px;
+    border-width: 1px;
     -webkit-box-shadow: none;
     box-shadow: none;
 }
@@ -7407,6 +7408,7 @@ a.list-group-item-warning.active {
 
 a.list-group-item-danger.active {
     background-color: #e74c3c;
+    
 }
 
     a.list-group-item-danger.active:hover, a.list-group-item-danger.active:focus {

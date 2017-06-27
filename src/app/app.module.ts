@@ -19,6 +19,7 @@ import { AgentTypeService } from './shared/services/AgentType/AgentType.service'
 import { BankService } from './shared/services/bank/bank.service';
 import { BankBranchService } from './shared/services/bankBranch/bankBranch.service';
 import { BranchService } from './shared/services/branch/branch.service';
+import { LevelService } from './shared/services/Level/level.service';
 
 
 import { AgentComponent } from './pages/agent/agent.component';
@@ -68,7 +69,8 @@ import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawe
     AgentTypeService,
     BankService,
     BankBranchService,
-    BranchService
+    BranchService,
+    LevelService
     ],
 
 
