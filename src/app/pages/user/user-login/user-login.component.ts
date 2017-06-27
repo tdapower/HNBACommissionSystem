@@ -79,6 +79,9 @@ export class UserLoginComponent implements OnInit {
 
 
     this.isLoading = true;
+
+          //this.router.navigate(['/', 'mainDashboard']);
+
     this.authenticationService.CheckAndLoadUser(this.UserName, this.Password)
       .subscribe((data) => {
 

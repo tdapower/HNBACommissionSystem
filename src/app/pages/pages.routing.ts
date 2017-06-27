@@ -7,6 +7,10 @@ import { MainDashboardComponent } from './dashboards/main-dashboard/main-dashboa
 
 export const PAGE_ROUTES: Routes = [
     {
+        path: '',
+        component: AgentComponent
+    },
+    {
         path: 'agent',
         component: AgentComponent
     },
@@ -18,7 +22,5 @@ export const PAGE_ROUTES: Routes = [
         path: 'mainDashboard',
         component: MainDashboardComponent
     }
-    
-
 
 ];

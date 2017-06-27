@@ -24,7 +24,7 @@ export class BankComponent implements OnInit {
   }
 
   getBanks() {
-    this.BankService.getBank()
+    this.BankService.getBanks()
       .subscribe((data) => {
 
         this.bankList = data;
@@ -36,14 +36,14 @@ export class BankComponent implements OnInit {
     try {
 
       let obj: IBank = {
-        ID: this.Id,
-        CODE: this.Code,
-        DESCRIPTION: this.Description
+        Id: this.Id,
+        Code: this.Code,
+        Description: this.Description
       }
 
 
 
-      this.BankService.SaveBank(obj).subscribe((data: any) => {
+      this.BankService.saveBank(obj).subscribe((data: any) => {
         console.log(data);
 
         this.getBanks();

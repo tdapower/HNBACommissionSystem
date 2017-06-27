@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-
 import { BranchService } from '../../shared/services/branch/branch.service';
 import { IBranch } from '../../shared/models/Branch.models';
 
@@ -18,6 +17,12 @@ import { IAgentCode } from '../../shared/models/AgentCode.models';
 
 import { AgentService } from '../../shared/services/Agent/Agent.service';
 import { IAgent } from '../../shared/models/Agent.models';
+
+import { IAgentSearch } from '../../shared/models/AgentSearch';
+
+import { LevelService } from '../../shared/services/Level/level.service';
+import { ILevel } from '../../shared/models/Level.models';
+
 
 import { DatePipe } from '@angular/common';
 import { MomentModule } from 'angular2-moment';
@@ -43,12 +48,16 @@ export class AgentComponent implements OnInit {
   AgentTypeList: Array<IAgentType> = [];
   AgentCodeList: Array<IAgentCode> = [];
 
+  AgentSearchList: Array<IAgentSearch> = [];
+  AgentLevelList: Array<ILevel> = [];
+
   SelectedBranchID: string = '';
   SelectedBankID: string = '';
   SelectedAgentTypeID: string = '';
 
   //------------Agent------------
   AGT_ID: number = 0;
+  AGT_CODE: string = '';
   AGT_TYPE_ID: number = 0;
   AGT_CODE_ID: number = 0;
   AGT_MDRT_STATUS: number = 0;
@@ -111,7 +120,10 @@ export class AgentComponent implements OnInit {
   AGT_RETAINER_AMOUNT: number;
   AGT_RETAINER_GIVEN_DATE: Date;
   AGT_RETAINER_CLOSE_DATE: Date;
-
+  AGT_LEADER_AGENT_CODE_V: string;
+  AGT_LEADER_LEADER_CODE_V: string;
+  AGT_LEADER_AGENT_CODE_H: string;
+  AGT_LEADER_LEADER_CODE_H: string;
   //-----------------------------
 
   isAgentDetailsValid: boolean = true;
@@ -181,13 +193,27 @@ export class AgentComponent implements OnInit {
   AGT_RETAINER_AMOUNT_CLS: string = '';
   AGT_RETAINER_GIVEN_DATE_CLS: string = '';
   AGT_RETAINER_CLOSE_DATE_CLS: string = '';
+  AGT_LEADER_AGENT_CODE_V_CLS: string= '';
+  AGT_LEADER_LEADER_CODE_V_CLS: string= '';
+  AGT_LEADER_AGENT_CODE_H_CLS: string= '';
+  AGT_LEADER_LEADER_CODE_H_CLS: string= '';
   //----------------End field Validation-------------
+
+
+  //Agent Search Cols--------------------------------
+  AGT_SEARCH_ID: number;
+  AGT_SEARCH_CODE: string;
+  AGT_SEARCH_NAME: string;
+  AGT_SEARCH_ADDRESS: string;
+  AGT_SEARCH_NIC_NO: string;
+  AGT_SEARCH_MOBILE: string;
+  //-------------------------------------------------
 
 
   datepickerOpts = {
     format: 'dd/mm/yyyy'
   }
-  constructor(private BranchService: BranchService, private BankService: BankService, private BankBranchService: BankBranchService, private AgentTypeService: AgentTypeService, private AgentCodeService: AgentCodeService, private AgentService: AgentService, moment: MomentModule) { }
+  constructor(private BranchService: BranchService, private BankService: BankService, private BankBranchService: BankBranchService, private AgentTypeService: AgentTypeService, private AgentCodeService: AgentCodeService, private AgentService: AgentService, private LevelService: LevelService, moment: MomentModule) { }
 
 
   ngOnInit() {
@@ -196,13 +222,23 @@ export class AgentComponent implements OnInit {
       this.getBranches();
       this.getBanks();
       this.getAgentTypes();
-
+      this.getLevels();
       //this.clearValues();
 
     } catch (error) {
       alert('Error Ocurred...!');
     }
 
+  }
+
+  getLevels() {
+    this.LevelService.getLevel()
+      .subscribe((data) => {
+
+        this.AgentLevelList = data;
+        console.log(JSON.stringify(data));
+      },
+      (err) => console.log(err));
   }
 
   myFunc(FName, Lname) {
@@ -214,12 +250,13 @@ export class AgentComponent implements OnInit {
       .subscribe((data) => {
 
         this.branchList = data;
+        //console.log(JSON.stringify(data));
       },
       (err) => console.log(err));
   }
 
   getBanks() {
-    this.BankService.getBank()
+    this.BankService.getBanks()
       .subscribe((data) => {
 
         this.bankList = data;
@@ -261,6 +298,7 @@ export class AgentComponent implements OnInit {
 
       let objAgent: IAgent = {
         AGT_ID: this.AGT_ID,
+        AGT_CODE: this.AGT_CODE,
         AGT_CODE_ID: this.AGT_CODE_ID,
         AGT_TYPE_ID: this.AGT_TYPE_ID,
         AGT_MDRT_STATUS: this.AGT_MDRT_STATUS,
@@ -322,13 +360,18 @@ export class AgentComponent implements OnInit {
         AGT_RETAINER_STATUS: this.AGT_RETAINER_STATUS,
         AGT_RETAINER_AMOUNT: this.AGT_RETAINER_AMOUNT,
         AGT_RETAINER_GIVEN_DATE: FormattedAGT_RETAINER_GIVEN_DATE,
-        AGT_RETAINER_CLOSE_DATE: FormattedAGT_RETAINER_CLOSE_DATE
+        AGT_RETAINER_CLOSE_DATE: FormattedAGT_RETAINER_CLOSE_DATE,
+        AGT_LEADER_AGENT_CODE_V: this.AGT_LEADER_AGENT_CODE_V,
+        AGT_LEADER_LEADER_CODE_V: this.AGT_LEADER_LEADER_CODE_V,
+        AGT_LEADER_AGENT_CODE_H: this.AGT_LEADER_AGENT_CODE_H,
+        AGT_LEADER_LEADER_CODE_H: this.AGT_LEADER_LEADER_CODE_H,
 
 
       }
 
-
       console.log(objAgent);
+      console.log(JSON.stringify(objAgent));
+
       this.AgentService.SaveAgent(objAgent).subscribe((data: any) => {
         console.log(data);
 
@@ -370,7 +413,6 @@ export class AgentComponent implements OnInit {
   }
 
   getAgentTypes() {
-
     try {
       this.AgentTypeService.getAgents()
         .subscribe((data) => {
@@ -778,12 +820,12 @@ export class AgentComponent implements OnInit {
       this.AGT_BUSINESS_TYPE_CLS = "form-group"; //AgentTypeClass
     }
 
-    if (this.AGT_LEVEL_CODE == undefined || this.AGT_LEVEL_CODE == '') {
-      this.AGT_LEVEL_CODE_CLS = "has-error";
-      this.isAgentDetailsValid = false;
-    } else {
-      this.AGT_LEVEL_CODE_CLS = "form-group"; //AgentTypeClass AGT_SUPER_CODE
-    }
+    // if (this.AGT_LEVEL_CODE == undefined || this.AGT_LEVEL_CODE == '') {
+    //   this.AGT_LEVEL_CODE_CLS = "has-error";
+    //   this.isAgentDetailsValid = false;
+    // } else {
+    //   this.AGT_LEVEL_CODE_CLS = "form-group"; //AgentTypeClass AGT_SUPER_CODE
+    // }
 
     if (this.AGT_SUPER_CODE == undefined || this.AGT_SUPER_CODE == '') {
       this.AGT_SUPER_CODE_CLS = "has-error";
@@ -879,6 +921,7 @@ export class AgentComponent implements OnInit {
     var moment = require('moment');
 
     this.AGT_ID = 0;
+    this.AGT_CODE = '';
     this.AGT_CODE_ID = 0;
     this.AGT_TYPE_ID = 0;
     this.AGT_MDRT_STATUS = null;
@@ -949,5 +992,154 @@ export class AgentComponent implements OnInit {
   DateTimeCheck() {
 
   }
+
+  SearchRecord() {
+
+    let objAgentSearch: IAgentSearch = {
+
+      AGT_ID: this.AGT_SEARCH_ID,
+      AGT_CODE: this.AGT_SEARCH_CODE,
+      AGT_NAME: this.AGT_SEARCH_NAME,
+      AGT_ADDRESS: this.AGT_SEARCH_ADDRESS,
+      AGT_NIC_NO: this.AGT_SEARCH_NIC_NO,
+      AGT_MOBILE: this.AGT_SEARCH_MOBILE
+
+    }
+
+    console.log(objAgentSearch);
+
+    this.AgentService.GetAgentSearchDetails(objAgentSearch)
+      .subscribe((data) => {
+
+        this.AgentSearchList = data;
+
+        console.log(this.AgentSearchList);
+
+        console.log(JSON.stringify(data));
+
+      },
+      (err) => console.log(err));
+
+
+
+    this.BankService.getBanks()
+      .subscribe((data) => {
+
+        this.bankList = data;
+
+        console.log(JSON.stringify(data));
+      },
+      (err) => console.log(err));
+
+
+  }
+
+
+
+  setClickedRow = function (index, AGENT_ID) {
+    console.log(AGENT_ID);
+
+    this.AgentService.getAgentBySeqId(AGENT_ID)
+      .subscribe((data) => {
+        this.isLoading = false;
+
+        let obj: IAgent = JSON.parse(data);
+
+        this.AGT_SUB_CODE = obj.AGT_CODE;
+
+        var moment = require('moment');
+
+        this.AGT_ID = obj.AGT_ID,
+          this.AGT_CODE = obj.AGT_CODE,
+
+          this.AGT_TYPE_ID = obj.AGT_TYPE_ID,
+
+          this.getAgentCodeByTypeID(obj.AGT_TYPE_ID);
+
+        this.AGT_CODE_ID = obj.AGT_CODE_ID,
+
+          this.AGT_MDRT_STATUS = obj.AGT_MDRT_STATUS,
+          this.AGT_MDRT_YEAR = obj.AGT_MDRT_YEAR,
+          this.AGT_SYSTEM_ID = obj.AGT_SYSTEM_ID,
+          this.AGT_SUB_CODE = obj.AGT_SUB_CODE,
+          this.AGT_LINE_OF_BUSINESS = obj.AGT_LINE_OF_BUSINESS,
+          this.AGT_CHANNEL = obj.AGT_CHANNEL,
+          this.AGT_LEVEL = obj.AGT_LEVEL,
+          this.AGT_SUPER_CODE = obj.AGT_SUPER_CODE,
+          this.AGT_TITLE = obj.AGT_TITLE,
+          this.AGT_FIRST_NAME = obj.AGT_FIRST_NAME,
+          this.AGT_LAST_NAME = obj.AGT_LAST_NAME,
+          this.AGT_ADD1 = obj.AGT_ADD1,
+          this.AGT_ADD2 = obj.AGT_ADD2,
+          this.AGT_ADD3 = obj.AGT_ADD3,
+          this.AGT_NIC_NO = obj.AGT_NIC_NO,
+          this.AGT_DOB = moment(obj.AGT_DOB.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_MOBILE = obj.AGT_MOBILE,
+          this.AGT_TEL_NO = obj.AGT_TEL_NO,
+          this.AGT_FAX_NO = obj.AGT_FAX_NO,
+          this.AGT_BRANCH_CODE = obj.AGT_BRANCH_CODE,
+          this.AGT_BANK_ID = obj.AGT_BANK_ID,
+
+          this.getBankBranch(obj.AGT_BANK_ID);
+
+        this.AGT_BANK_BRANCH_ID = obj.AGT_BANK_BRANCH_ID,
+
+          this.AGT_BANK_ACC_NO = obj.AGT_BANK_ACC_NO,
+          this.AGT_ID_ISSUED = obj.AGT_ID_ISSUED,
+          this.AGT_ID_ISSUED_DATE = moment(obj.AGT_ID_ISSUED_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_APPOINT_DATE = moment(obj.AGT_APPOINT_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_SLII_EXAM = obj.AGT_SLII_EXAM,
+          this.AGT_SLII_EXAM_DATE = moment(obj.AGT_SLII_EXAM_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_AGMT_RECEIVED = obj.AGT_AGMT_RECEIVED,
+          this.AGT_AGMT_DATE = moment(obj.AGT_AGMT_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_APP_RECEIVED = obj.AGT_APP_RECEIVED,
+          this.AGT_APP_RECEIVED_DATE = moment(obj.AGT_APP_RECEIVED_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_TRNS_BRANCH_CODE = obj.AGT_TRNS_BRANCH_CODE,
+          this.AGT_TRNS_BRANCH_DATE = obj.AGT_TRNS_BRANCH_DATE,
+          this.AGT_STOP_COMM_DATE = moment(obj.AGT_STOP_COMM_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_STOP_COMM_REASON = obj.AGT_STOP_COMM_REASON,
+          this.AGT_RELEASE_COMM_DATE = moment(obj.AGT_RELEASE_COMM_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_RELEASE_COMM_REASON = obj.AGT_RELEASE_COMM_REASON,
+          this.AGT_CUSTOMER_COMPLAIN = obj.AGT_CUSTOMER_COMPLAIN,
+          this.AGT_TERMINATE_NOTICE_DATE = moment(obj.AGT_TERMINATE_NOTICE_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_TERMINATE_DATE = moment(obj.AGT_TERMINATE_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_TERMINATE_REASON = obj.AGT_TERMINATE_REASON,
+          this.AGT_BLACK_LISTED_DATE = moment(obj.AGT_BLACK_LISTED_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_DUES_TO_COMPANY = obj.AGT_DUES_TO_COMPANY,
+          this.AGT_REJOINED_DATE = moment(obj.AGT_REJOINED_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_REMARKS = obj.AGT_REMARKS,
+          this.AGT_BUSINESS_TYPE = obj.AGT_BUSINESS_TYPE,
+          this.AGT_LEVEL_CODE = obj.AGT_LEVEL_CODE,
+          this.AGT_LEADER_CODE = obj.AGT_LEADER_CODE,
+          this.AGT_STATUS = obj.AGT_STATUS,
+          this.AGT_TERMINATE_STATUS = obj.AGT_TERMINATE_STATUS,
+          this.AGT_STOP_COMM_STATUS = obj.AGT_STOP_COMM_STATUS,
+          this.AGT_ISS_STATUS = obj.AGT_ISS_STATUS,
+          this.AGT_ISS_AMOUNT = obj.AGT_ISS_AMOUNT,
+          this.AGT_ISS_GIVEN_DATE = moment(obj.AGT_ISS_GIVEN_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_ISS_CLOSE_DATE = moment(obj.AGT_ISS_CLOSE_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_RETAINER_STATUS = obj.AGT_RETAINER_STATUS,
+          this.AGT_RETAINER_AMOUNT = obj.AGT_RETAINER_AMOUNT,
+          this.AGT_RETAINER_GIVEN_DATE = moment(obj.AGT_RETAINER_GIVEN_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_RETAINER_CLOSE_DATE = moment(obj.AGT_RETAINER_CLOSE_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+        this.AGT_LEADER_AGENT_CODE_V = obj.AGT_LEADER_AGENT_CODE_V,
+        this.AGT_LEADER_LEADER_CODE_V = obj.AGT_LEADER_LEADER_CODE_V,
+        this.AGT_LEADER_AGENT_CODE_H = obj.AGT_LEADER_AGENT_CODE_H,
+        this.AGT_LEADER_LEADER_CODE_H = obj.AGT_LEADER_LEADER_CODE_H,
+
+
+        console.log(obj);
+
+      },
+      (err) => {
+
+        console.log(err);
+        this.isLoading = false;
+
+      });
+
+  }
+
+
 }
 
