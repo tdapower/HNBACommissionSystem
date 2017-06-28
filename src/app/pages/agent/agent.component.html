@@ -1,5 +1,75 @@
 <!--<div class="panel-heading">-->
 <!-- Nav tabs -->
+
+
+<div class="row">
+
+  <modal #docUploadModal>
+    <modal-header>
+      <h4>Upload</h4>
+    </modal-header>
+    <modal-content>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="UploadDocTypeId" class="col-lg-4 control-label">Document Type</label>
+            <div class="col-lg-4">
+
+              <select type="text" class="form-control input-sm" [(ngModel)]="UploadDocTypeId" name="UploadDocTypeId" id="UploadDocTypeId"
+                (ngModelChange)="onSelectOfUploadDocTypeId($event)">
+<option value="0">Select</option>
+<option value="1">aaaa</option>
+<option value="2">bbbb</option>
+
+</select>
+            </div>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <label class="upload-button is-pulled-left">
+    <input type="file"
+           class="hidden"
+           ngFileSelect
+           [options]="uploaderOptions"
+           [events]="inputUploadEvents"
+           (onUpload)="handleUpload($event)"
+           
+           (beforeUpload)="beforeUpload($event)">
+   <div class="btn btn-primary">Browse</div> 
+  </label>
+        </div>
+      </div>
+
+      <p>
+        Allowed extensions: <code><b>.pdf</b></code>
+      </p>
+
+
+
+      <div *ngIf="response">
+        <pre><code>{{ response | json }}</code></pre>
+      </div>
+
+      <div *ngIf="errorMessage">
+        <code>{{ errorMessage }}</code>
+      </div>
+      <div *ngIf="previewData && !response">
+        <img [src]="previewData">
+      </div>
+
+    </modal-content>
+    <modal-footer>
+
+      <button type="button" class="btn btn-info" (click)="startUpload()">Upload</button>
+
+
+      <button class="btn btn-primary" (click)="docUploadModal.close()">close</button>
+    </modal-footer>
+  </modal>
+</div>
+
+
 <ul class="nav nav-tabs" role="tablist">
 
   <li class="active"><a href="#Personal" role="tab" data-toggle="tab">Personal Details</a></li>
@@ -414,6 +484,11 @@
           <div class="col-sm-3">
             <button type="button" class="btn btn-default btn-sm">Print Record</button>
           </div>
+          <div class="col-sm-3">
+            <button class="btn btn-primary btn-block btn-sm" (click)="docUploadModal.open()">Upload Docs</button>
+          </div>
+
+
         </div>
 
 

@@ -236,7 +236,17 @@ export class AgentComponent implements OnInit {
   datepickerOpts = {
     format: 'dd/mm/yyyy'
   }
-  constructor(private BranchService: BranchService, private BankService: BankService, private BankBranchService: BankBranchService, private AgentTypeService: AgentTypeService, private AgentCodeService: AgentCodeService, private AgentService: AgentService, private LevelService: LevelService, private UploadDocTypeService: UploadDocTypeService, moment: MomentModule) { }
+  constructor(private BranchService: BranchService, private BankService: BankService, 
+  private BankBranchService: BankBranchService, private AgentTypeService: AgentTypeService,
+   private AgentCodeService: AgentCodeService, private AgentService: AgentService, 
+   private LevelService: LevelService, private UploadDocTypeService: UploadDocTypeService, 
+   moment: MomentModule,
+    @Inject(NgZone) private zone: NgZone) { 
+
+
+
+    this.inputUploadEvents = new EventEmitter<string>();
+   }
 
 
   ngOnInit() {
@@ -258,9 +268,69 @@ export class AgentComponent implements OnInit {
 
   }
 
+  startUpload() {
+    this.inputUploadEvents.emit('startUpload');
+  }
+
+  beforeUpload(uploadingFile: UploadedFile): void {
+    if (uploadingFile.size > this.sizeLimit) {
+      uploadingFile.setAbort();
+      this.errorMessage = 'File is too large!';
+    }
+  }
+
+  handleUpload(data: any) {
+    setTimeout(() => {
+      this.zone.run(() => {
+        // this.response = data;
+        if (data && data.response) {
+          // this.response = JSON.parse(data.response);
+          console.log(JSON.parse(data.response));
+         // this.showSuccess("Document Successfully Uploaded.");
+
+        }
+      });
+    });
+  }
+
+  handlePreviewData(data: any) {
+    this.previewData = data;
+  }
+
+
+  onSelectOfUploadDocTypeId(docTypeId) {
 
 
 
+    this.UploadDocTypeId = docTypeId;
+    console.log('doc type-' + this.UploadDocTypeId);
+
+
+    // this.DocUploadUrl = this.sanitizer.bypassSecurityTrustResourceUrl(URL_CONST.URL_PREFIX + 'api/Main/UploadDocument');
+    this.DocUploadUrl = 'http://localhost:46817/api/Main/UploadDocument?sTempSeqId=' +'aaaaasas';
+   // this.DocUploadUrl = URL_CONST.URL_PREFIX + 'api/Main/UploadDocument?sTempSeqId=' + this.TempSeqId;
+
+alert('awa awa');
+
+    console.log('url - ' + this.DocUploadUrl);
+
+    this.uploaderOptions = new NgUploaderOptions({
+      url: this.DocUploadUrl,
+      filterExtensions: true,
+      allowedExtensions: ['jpg', 'pdf'],
+      data: { tempSeqId: '123', docTypeId: this.UploadDocTypeId },
+      autoUpload: false,
+      fieldName: 'file',
+      fieldReset: true,
+      maxUploads: 2,
+      method: 'POST',
+      previewUrl: true,
+      withCredentials: false
+    });
+
+
+    console.log('options - ' + JSON.stringify(this.uploaderOptions));
+  }
 
 
 
