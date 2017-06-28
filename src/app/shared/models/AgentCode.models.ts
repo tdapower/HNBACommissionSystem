@@ -1,4 +1,4 @@
 export interface IAgentCode{
-    ID:number;
+    ID:string;
     DESCRIPTION:string;
 }

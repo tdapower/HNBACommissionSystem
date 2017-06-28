@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone, Inject, EventEmitter } from '@angular/core';
 
 import { BranchService } from '../../shared/services/branch/branch.service';
 import { IBranch } from '../../shared/models/Branch.models';
@@ -20,6 +20,9 @@ import { IAgent } from '../../shared/models/Agent.models';
 
 import { IAgentSearch } from '../../shared/models/AgentSearch';
 
+import { UploadDocTypeService } from '../../shared/services/UploadDocType/upload-doc-type.service';
+import { IUploadDocType } from '../../shared/models/UploadDocType.models';
+
 import { LevelService } from '../../shared/services/Level/level.service';
 import { ILevel } from '../../shared/models/Level.models';
 
@@ -28,6 +31,11 @@ import { DatePipe } from '@angular/common';
 import { MomentModule } from 'angular2-moment';
 
 import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
+
+import { IUser } from '../../shared/models/user/user.model';
+
+import { UUID } from 'angular2-uuid';
+import { NgUploaderOptions, UploadedFile, UploadRejected } from 'ngx-uploader';
 
 declare var jQuery: any;
 
@@ -38,6 +46,8 @@ declare var jQuery: any;
 })
 export class AgentComponent implements OnInit {
 
+  User: IUser;
+
   Id: number = 0;
   Code: string = '';
   Description: string = '';
@@ -47,16 +57,16 @@ export class AgentComponent implements OnInit {
   bankBranchList: Array<IBankBranch> = [];
   AgentTypeList: Array<IAgentType> = [];
   AgentCodeList: Array<IAgentCode> = [];
-
   AgentSearchList: Array<IAgentSearch> = [];
   AgentLevelList: Array<ILevel> = [];
+  UploadDocTypeList: Array<IUploadDocType> = [];
 
   SelectedBranchID: string = '';
   SelectedBankID: string = '';
   SelectedAgentTypeID: string = '';
 
   //------------Agent------------
-  AGT_ID: number = 0;
+  AGT_ID: string = '';
   AGT_CODE: string = '';
   AGT_TYPE_ID: number = 0;
   AGT_CODE_ID: number = 0;
@@ -124,6 +134,7 @@ export class AgentComponent implements OnInit {
   AGT_LEADER_LEADER_CODE_V: string;
   AGT_LEADER_AGENT_CODE_H: string;
   AGT_LEADER_LEADER_CODE_H: string;
+  AGT_CREATED_BY: string;
   //-----------------------------
 
   isAgentDetailsValid: boolean = true;
@@ -193,15 +204,15 @@ export class AgentComponent implements OnInit {
   AGT_RETAINER_AMOUNT_CLS: string = '';
   AGT_RETAINER_GIVEN_DATE_CLS: string = '';
   AGT_RETAINER_CLOSE_DATE_CLS: string = '';
-  AGT_LEADER_AGENT_CODE_V_CLS: string= '';
-  AGT_LEADER_LEADER_CODE_V_CLS: string= '';
-  AGT_LEADER_AGENT_CODE_H_CLS: string= '';
-  AGT_LEADER_LEADER_CODE_H_CLS: string= '';
+  AGT_LEADER_AGENT_CODE_V_CLS: string = '';
+  AGT_LEADER_LEADER_CODE_V_CLS: string = '';
+  AGT_LEADER_AGENT_CODE_H_CLS: string = '';
+  AGT_LEADER_LEADER_CODE_H_CLS: string = '';
   //----------------End field Validation-------------
 
 
   //Agent Search Cols--------------------------------
-  AGT_SEARCH_ID: number;
+  AGT_SEARCH_ID: string;
   AGT_SEARCH_CODE: string;
   AGT_SEARCH_NAME: string;
   AGT_SEARCH_ADDRESS: string;
@@ -209,11 +220,23 @@ export class AgentComponent implements OnInit {
   AGT_SEARCH_MOBILE: string;
   //-------------------------------------------------
 
+  UploadDocTypeId: number;
+  uploadDocTypeList: Array<IUploadDocType> = [];
+  DocUploadUrl: any;
+
+  uploaderOptions: NgUploaderOptions;
+  response: any;
+  sizeLimit: number = 10000000; // 10MB
+  previewData: any;
+  errorMessage: string;
+  inputUploadEvents: EventEmitter<string>;
+
+
 
   datepickerOpts = {
     format: 'dd/mm/yyyy'
   }
-  constructor(private BranchService: BranchService, private BankService: BankService, private BankBranchService: BankBranchService, private AgentTypeService: AgentTypeService, private AgentCodeService: AgentCodeService, private AgentService: AgentService, private LevelService: LevelService, moment: MomentModule) { }
+  constructor(private BranchService: BranchService, private BankService: BankService, private BankBranchService: BankBranchService, private AgentTypeService: AgentTypeService, private AgentCodeService: AgentCodeService, private AgentService: AgentService, private LevelService: LevelService, private UploadDocTypeService: UploadDocTypeService, moment: MomentModule) { }
 
 
   ngOnInit() {
@@ -223,12 +246,34 @@ export class AgentComponent implements OnInit {
       this.getBanks();
       this.getAgentTypes();
       this.getLevels();
-      //this.clearValues();
+      this.clearValues();
+
+      this.getUploadDocTypes();
+
+      this.User = JSON.parse(localStorage.getItem('currentMRPUser'));
 
     } catch (error) {
       alert('Error Ocurred...!');
     }
 
+  }
+
+
+
+
+
+
+
+
+  getUploadDocTypes() {
+    alert('dd');
+    this.UploadDocTypeService.getUploadDocTypes()
+      .subscribe((data) => {
+
+        this.UploadDocTypeList = data;
+        console.log(JSON.stringify(data));
+      },
+      (err) => console.log(err));
   }
 
   getLevels() {
@@ -267,10 +312,12 @@ export class AgentComponent implements OnInit {
   SaveRecord() {
     try {
 
-      this.validateFields();
-      if (!this.isAgentDetailsValid) {
-        return;
-      }
+
+
+      // this.validateFields();
+      // if (!this.isAgentDetailsValid) {
+      //   return;
+      // }
 
 
 
@@ -294,6 +341,8 @@ export class AgentComponent implements OnInit {
       var FormattedAGT_ISS_CLOSE_DATE = moment(this.AGT_ISS_CLOSE_DATE).format('DD/MM/YYYY');
       var FormattedAGT_RETAINER_GIVEN_DATE = moment(this.AGT_RETAINER_GIVEN_DATE).format('DD/MM/YYYY');
       var FormattedAGT_RETAINER_CLOSE_DATE = moment(this.AGT_RETAINER_CLOSE_DATE).format('DD/MM/YYYY');
+
+      var FormattedAGT_TRNS_BRANCH_DATE = moment(this.AGT_TRNS_BRANCH_DATE).format('DD/MM/YYYY');
 
 
       let objAgent: IAgent = {
@@ -334,7 +383,7 @@ export class AgentComponent implements OnInit {
         AGT_APP_RECEIVED: this.AGT_APP_RECEIVED,
         AGT_APP_RECEIVED_DATE: FormattedAGT_APP_RECEIVED_DATE,
         AGT_TRNS_BRANCH_CODE: this.AGT_TRNS_BRANCH_CODE,
-        AGT_TRNS_BRANCH_DATE: this.AGT_TRNS_BRANCH_DATE,
+        AGT_TRNS_BRANCH_DATE: FormattedAGT_TRNS_BRANCH_DATE,
         AGT_STOP_COMM_DATE: FormattedAGT_STOP_COMM_DATE,
         AGT_STOP_COMM_REASON: this.AGT_STOP_COMM_REASON,
         AGT_RELEASE_COMM_DATE: FormattedAGT_RELEASE_COMM_DATE,
@@ -365,9 +414,10 @@ export class AgentComponent implements OnInit {
         AGT_LEADER_LEADER_CODE_V: this.AGT_LEADER_LEADER_CODE_V,
         AGT_LEADER_AGENT_CODE_H: this.AGT_LEADER_AGENT_CODE_H,
         AGT_LEADER_LEADER_CODE_H: this.AGT_LEADER_LEADER_CODE_H,
-
+        AGT_CREATED_BY: this.User.UserName//this.AGT_CREATED_BY
 
       }
+
 
       console.log(objAgent);
       console.log(JSON.stringify(objAgent));
@@ -920,7 +970,7 @@ export class AgentComponent implements OnInit {
 
     var moment = require('moment');
 
-    this.AGT_ID = 0;
+    this.AGT_ID = '';
     this.AGT_CODE = '';
     this.AGT_CODE_ID = 0;
     this.AGT_TYPE_ID = 0;
@@ -1050,6 +1100,7 @@ export class AgentComponent implements OnInit {
         var moment = require('moment');
 
         this.AGT_ID = obj.AGT_ID,
+
           this.AGT_CODE = obj.AGT_CODE,
 
           this.AGT_TYPE_ID = obj.AGT_TYPE_ID,
@@ -1095,10 +1146,10 @@ export class AgentComponent implements OnInit {
         this.AGT_APP_RECEIVED = obj.AGT_APP_RECEIVED,
           this.AGT_APP_RECEIVED_DATE = moment(obj.AGT_APP_RECEIVED_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
         this.AGT_TRNS_BRANCH_CODE = obj.AGT_TRNS_BRANCH_CODE,
-          this.AGT_TRNS_BRANCH_DATE = obj.AGT_TRNS_BRANCH_DATE,
-          this.AGT_STOP_COMM_DATE = moment(obj.AGT_STOP_COMM_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_TRNS_BRANCH_DATE = moment(obj.AGT_APP_RECEIVED_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();//obj.,
+        this.AGT_STOP_COMM_DATE = moment(obj.AGT_STOP_COMM_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
         this.AGT_STOP_COMM_REASON = obj.AGT_STOP_COMM_REASON,
-          this.AGT_RELEASE_COMM_DATE = moment(obj.AGT_RELEASE_COMM_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_RELEASE_COMM_DATE = moment(obj.AGT_TRNS_BRANCH_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
         this.AGT_RELEASE_COMM_REASON = obj.AGT_RELEASE_COMM_REASON,
           this.AGT_CUSTOMER_COMPLAIN = obj.AGT_CUSTOMER_COMPLAIN,
           this.AGT_TERMINATE_NOTICE_DATE = moment(obj.AGT_TERMINATE_NOTICE_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
@@ -1123,12 +1174,12 @@ export class AgentComponent implements OnInit {
           this.AGT_RETAINER_GIVEN_DATE = moment(obj.AGT_RETAINER_GIVEN_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
         this.AGT_RETAINER_CLOSE_DATE = moment(obj.AGT_RETAINER_CLOSE_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
         this.AGT_LEADER_AGENT_CODE_V = obj.AGT_LEADER_AGENT_CODE_V,
-        this.AGT_LEADER_LEADER_CODE_V = obj.AGT_LEADER_LEADER_CODE_V,
-        this.AGT_LEADER_AGENT_CODE_H = obj.AGT_LEADER_AGENT_CODE_H,
-        this.AGT_LEADER_LEADER_CODE_H = obj.AGT_LEADER_LEADER_CODE_H,
+          this.AGT_LEADER_LEADER_CODE_V = obj.AGT_LEADER_LEADER_CODE_V,
+          this.AGT_LEADER_AGENT_CODE_H = obj.AGT_LEADER_AGENT_CODE_H,
+          this.AGT_LEADER_LEADER_CODE_H = obj.AGT_LEADER_LEADER_CODE_H,
 
 
-        console.log(obj);
+          console.log(obj);
 
       },
       (err) => {
@@ -1138,8 +1189,12 @@ export class AgentComponent implements OnInit {
 
       });
 
+
+    this.router.navigate(['/', 'mainDashboard']);
+
+
   }
 
 
-}
 
+}

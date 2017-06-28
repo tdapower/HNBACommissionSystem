@@ -20,6 +20,7 @@ import { BankService } from './shared/services/bank/bank.service';
 import { BankBranchService } from './shared/services/bankBranch/bankBranch.service';
 import { BranchService } from './shared/services/branch/branch.service';
 import { LevelService } from './shared/services/Level/level.service';
+import { UploadDocTypeService } from './shared/services/UploadDocType/upload-doc-type.service';
 
 
 import { AgentComponent } from './pages/agent/agent.component';
@@ -32,8 +33,10 @@ import { AuthenticationService } from './shared/services/user/authentication.ser
 import { AuthGuard } from '../app/authGuard';
 import { SpinnerLargeComponent } from './layout/spinner-large/spinner-large.component';
 import { SpinnerTopComponent } from './layout/spinner-top/spinner-top.component';
-import { MainDashboardComponent } from './pages/dashboards/main-dashboard/main-dashboard.component';
+import { MainDashboardComponent } from './pages/main-dashboard/main-dashboard/main-dashboard.component';
 import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome';
+import { ImageUploadComponent } from './pages/image-upload/image-upload.component';
+// import { MainDashboardComponent } from './pages/main-dashboard/main-dashboard/main-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +48,8 @@ import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawe
     LayoutComponent,
     SpinnerLargeComponent,
     SpinnerTopComponent,
-    MainDashboardComponent
+    MainDashboardComponent,
+    ImageUploadComponent
   ],
   imports: [
     BrowserModule,
@@ -70,7 +74,9 @@ import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawe
     BankService,
     BankBranchService,
     BranchService,
-    LevelService
+    LevelService,
+    UploadDocTypeService,
+    MainDashboardComponent
     ],
 
 

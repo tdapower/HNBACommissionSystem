@@ -83,8 +83,9 @@
               <p class="control-label col-xs-2">MDRT</p>
               <div class="col-xs-8">
                 <select class="form-control" [(ngModel)]="AGT_MDRT_STATUS" name="AGT_MDRT_STATUS" id="AGT_MDRT_STATUS">
-                    <option value="1">Yes</option>
-                    <option value="2">No</option>
+                    <option value="0">SELECT</option>
+                    <option value="1">YES</option>
+                    <option value="2">NO</option>
                 </select>
               </div>
             </div>
@@ -139,7 +140,7 @@
           <div class="{{AGT_SUB_CODE_CLS}}">
             <p class="control-label col-xs-5">Agent Code</p>
             <div class="col-xs-7">
-              <input type="email" class="form-control" [(ngModel)]="AGT_CODE" name="AGT_CODE" id="AGT_SUB_CODE" placeholder="">
+              <input type="email" class="form-control" [(ngModel)]="AGT_CODE" name="AGT_CODE" id="AGT_SUB_CODE" placeholder="" disabled>
             </div>
           </div>
         </div>
@@ -220,9 +221,9 @@
             <p class="control-label col-xs-5">Date Of Birth</p>
 
             <div class="col-xs-7">
-
-              <datetime name="DateOfBirth" id="AGT_DOB" [datepicker]="datepickerOpts" [(ngModel)]="AGT_DOB" [timepicker]="false"></datetime>
-
+              <div class="col-xs-12">
+                <datetime name="DateOfBirth" id="AGT_DOB" [datepicker]="datepickerOpts" [(ngModel)]="AGT_DOB" [timepicker]="false"></datetime>
+              </div>
             </div>
           </div>
         </div>
@@ -338,9 +339,9 @@
             <p class="control-label col-xs-5">Comp ID Issued</p>
             <div class="col-xs-7">
               <select class="form-control" [(ngModel)]="AGT_ID_ISSUED" name="AGT_ID_ISSUED" id="AGT_ID_ISSUED" required>
-                    <option value="0">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="2">No</option>
+                    <option value="0">SELECT</option>
+                    <option value="1">YES</option>
+                    <option value="2">NO</option>
                 </select>
             </div>
           </div>
@@ -349,8 +350,10 @@
           <div class="{{AGT_ID_ISSUED_DATE_CLS}}">
             <p class="control-label col-xs-5">Comp ID Issue Date</p>
             <div class="col-xs-7">
-              <datetime name="AGT_ID_ISSUED_DATE" id="AGT_ID_ISSUED_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_ID_ISSUED_DATE"
-                [timepicker]="false"></datetime>
+              <div class="col-xs-11">
+                <datetime name="AGT_ID_ISSUED_DATE" id="AGT_ID_ISSUED_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_ID_ISSUED_DATE"
+                  [timepicker]="false"></datetime>
+              </div>
             </div>
           </div>
         </div>
@@ -366,8 +369,9 @@
           <div class="{{AGT_APPOINT_DATE_CLS}}">
             <p class="control-label col-xs-5">Appointment Date</p>
             <div class="col-xs-7">
-              <datetime name="AGT_APPOINT_DATE" id="AGT_APPOINT_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_APPOINT_DATE" [timepicker]="false"></datetime>
-
+              <div class="col-xs-11">
+                <datetime name="AGT_APPOINT_DATE" id="AGT_APPOINT_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_APPOINT_DATE" [timepicker]="false"></datetime>
+              </div>
             </div>
           </div>
         </div>
@@ -376,8 +380,9 @@
             <p class="control-label col-xs-5">SLII Exam Status</p>
             <div class="col-xs-7">
               <select class="form-control">
-                    <option value="one">Yes</option>
-                    <option value="two">No</option>
+                    <option value="0">SELECT</option>
+                    <option value="1">YES</option>
+                    <option value="2">NO</option>
                 </select> </div>
           </div>
         </div>
@@ -385,9 +390,10 @@
           <div class="{{AGT_SLII_EXAM_DATE_CLS}}">
             <p class="control-label col-xs-5">SLII Exam Reg Date</p>
             <div class="col-xs-7">
-              <datetime name="AGT_SLII_EXAM_DATE" id="AGT_SLII_EXAM_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_SLII_EXAM_DATE"
-                [timepicker]="false"></datetime>
-
+              <div class="col-xs-11">
+                <datetime name="AGT_SLII_EXAM_DATE" id="AGT_SLII_EXAM_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_SLII_EXAM_DATE"
+                  [timepicker]="false"></datetime>
+              </div>
             </div>
           </div>
         </div>
@@ -448,13 +454,13 @@
             <p class="control-label col-xs-5">Agmt. Received / Issued Date</p>
             <div class="col-xs-3">
               <select class="form-control" [(ngModel)]="AGT_AGMT_RECEIVED" name="AGT_AGMT_RECEIVED" id="AGT_AGMT_RECEIVED" required>
-                    <option value="-1">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="0">No</option>
+                    <option value="0">SELECT</option>
+                    <option value="1">YES</option>
+                    <option value="2">NO</option>
                 </select>
             </div>
 
-            <div class="col-xs-3">
+            <div class="col-xs-4">
 
               <datetime name="DateOfBirth" id="AGT_AGMT_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_AGMT_DATE" [timepicker]="false"></datetime>
 
@@ -471,9 +477,9 @@
             <p class="control-label col-xs-5">App. Received / Issued Date</p>
             <div class="col-xs-3">
               <select class="form-control" [(ngModel)]="AGT_APP_RECEIVED" name="AGT_APP_RECEIVED" id="AGT_APP_RECEIVED" required>
-                    <option value="-1">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="2">No</option>
+                    <option value="0">SELECT</option>
+                    <option value="1">YES</option>
+                    <option value="2">NO</option>
                 </select>
             </div>
             <div class="col-xs-3">
@@ -520,9 +526,9 @@
             </div>
             <p class="control-label col-xs-4">Stop Commission Date</p>
             <div class="col-xs-3">
-
-              <datetime name="DateOfBirth" id="AGT_STOP_COMM_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_STOP_COMM_DATE" [timepicker]="false"></datetime>
-
+              <div class="col-xs-12">
+                <datetime name="DateOfBirth" id="AGT_STOP_COMM_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_STOP_COMM_DATE" [timepicker]="false"></datetime>
+              </div>
             </div>
 
             <!--Start Stop Commission popup-->
@@ -598,10 +604,10 @@
             </div>
             <p class="control-label col-xs-4">Release Commission Date</p>
             <div class="col-xs-3">
-
-              <datetime name="DateOfBirth" id="AGT_RELEASE_COMM_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_RELEASE_COMM_DATE"
-                [timepicker]="false"></datetime>
-
+              <div class="col-xs-12">
+                <datetime name="DateOfBirth" id="AGT_RELEASE_COMM_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_RELEASE_COMM_DATE"
+                  [timepicker]="false"></datetime>
+              </div>
             </div>
 
             <!--Start Stop Commission popup-->
@@ -698,9 +704,10 @@
             </div>
             <p class="control-label col-xs-5">Notice Of Termination Date</p>
             <div class="col-xs-6">
-
-              <datetime name="DateOfBirth" id="AGT_TERMINATE_NOTICE_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_TERMINATE_NOTICE_DATE"
-                [timepicker]="false"></datetime>
+              <div class="col-xs-12">
+                <datetime name="DateOfBirth" id="AGT_TERMINATE_NOTICE_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_TERMINATE_NOTICE_DATE"
+                  [timepicker]="false"></datetime>
+              </div>
 
             </div>
           </div>
@@ -716,9 +723,9 @@
             </div>
             <p class="control-label col-xs-5">Termination Date</p>
             <div class="col-xs-6">
-
-              <datetime name="DateOfBirth" id="AGT_TERMINATE_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_TERMINATE_DATE" [timepicker]="false"></datetime>
-
+              <div class="col-xs-12">
+                <datetime name="DateOfBirth" id="AGT_TERMINATE_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_TERMINATE_DATE" [timepicker]="false"></datetime>
+              </div>
             </div>
           </div>
         </div>
@@ -749,10 +756,10 @@
             </div>
             <p class="control-label col-xs-5">IASL Black Listed Date</p>
             <div class="col-xs-6">
-
-              <datetime name="DateOfBirth" id="AGT_BLACK_LISTED_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_BLACK_LISTED_DATE"
-                [timepicker]="false"></datetime>
-
+              <div class="col-xs-12">
+                <datetime name="DateOfBirth" id="AGT_BLACK_LISTED_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_BLACK_LISTED_DATE"
+                  [timepicker]="false"></datetime>
+              </div>
             </div>
           </div>
         </div>
@@ -783,8 +790,9 @@
             </div>
             <p class="control-label col-xs-5">Rejoined Date</p>
             <div class="col-xs-6">
-
-              <datetime name="DateOfBirth" id="AGT_REJOINED_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_REJOINED_DATE" [timepicker]="false"></datetime>
+              <div class="col-xs-12">
+                <datetime name="DateOfBirth" id="AGT_REJOINED_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_REJOINED_DATE" [timepicker]="false"></datetime>
+              </div>
             </div>
           </div>
         </div>
@@ -829,12 +837,13 @@
 
           <form class="form-horizontal">
             <div class="row">
-              <div class="{{AGT_LEADER_CODE_CLS}}">
+              <div class="form-group">
                 <div class="col-xs-0">
                 </div>
                 <p class="control-label col-xs-6">Leader's Agent Code</p>
-                <div class="col-xs-6">
-                  <input type="email" class="form-control" [(ngModel)]="AGT_LEADER_AGENT_CODE_H" name="AGT_LEADER_AGENT_CODE_H" id="AGT_LEADER_AGENT_CODE_H" placeholder="">
+                <div class="col-xs-5">
+                  <input type="email" class="form-control" [(ngModel)]="AGT_LEADER_AGENT_CODE_H" name="AGT_LEADER_AGENT_CODE_H" id="AGT_LEADER_AGENT_CODE_H"
+                    placeholder="">
                 </div>
               </div>
             </div>
@@ -842,12 +851,13 @@
 
           <form class="form-horizontal">
             <div class="row">
-              <div class="{{AGT_SUPER_CODE_CLS}}">
+              <div class="form-group">
                 <div class="col-xs-0">
                 </div>
                 <p class="control-label col-xs-6">Leader's Leader Code</p>
-                <div class="col-xs-6">
-                  <input type="email" class="form-control" [(ngModel)]="AGT_LEADER_LEADER_CODE_H" name="AGT_LEADER_LEADER_CODE_H" id="AGT_LEADER_LEADER_CODE_H" placeholder="">
+                <div class="col-xs-5">
+                  <input type="email" class="form-control" [(ngModel)]="AGT_LEADER_LEADER_CODE_H" name="AGT_LEADER_LEADER_CODE_H" id="AGT_LEADER_LEADER_CODE_H"
+                    placeholder="">
                 </div>
               </div>
             </div>
@@ -869,7 +879,7 @@
                 <div class="col-xs-6">
 
                   <select type="text" class="form-control input-sm" [(ngModel)]="AGT_LEVEL_CODE" name="AGT_LEVEL_CODE" id="AGT_LEVEL_CODE"
-                     required>
+                    required>
               <!--<option value="0">Select</option>-->
               <option *ngFor="let level of AgentLevelList" value={{level.ID}}>{{level.Description}}</option>
               </select>
@@ -885,9 +895,9 @@
               <div class="{{AGT_LEADER_CODE_CLS}}">
                 <div class="col-xs-0">
                 </div>
-                <p class="control-label col-xs-6">Doc No</p>
+                <p class="control-label col-xs-6">Level Code</p>
                 <div class="col-xs-6">
-                  <input type="email" class="form-control" [(ngModel)]="AGT_LEADER_CODE" name="AGT_LEADER_CODE" id="AGT_LEADER_CODE" placeholder="">
+                  <input type="email" class="form-control" [(ngModel)]="AGT_LEVEL_CODE" name="AGT_LEADER_CODE" id="AGT_LEADER_CODE" placeholder="">
                 </div>
               </div>
             </div>
@@ -962,12 +972,13 @@
 
           <form class="form-horizontal">
             <div class="row">
-              <div class="{{AGT_LEADER_CODE_CLS}}">
+              <div class="form-group">
                 <div class="col-xs-0">
                 </div>
                 <p class="control-label col-xs-6">Leader's Agent Code</p>
-                <div class="col-xs-6">
-                  <input type="email" class="form-control" [(ngModel)]="AGT_LEADER_AGENT_CODE_V" name="AGT_LEADER_AGENT_CODE_V" id="AGT_LEADER_AGENT_CODE_V" placeholder="">
+                <div class="col-xs-5">
+                  <input type="email" class="form-control" [(ngModel)]="AGT_LEADER_AGENT_CODE_V" name="AGT_LEADER_AGENT_CODE_V" id="AGT_LEADER_AGENT_CODE_V"
+                    placeholder="">
                 </div>
               </div>
             </div>
@@ -975,12 +986,13 @@
 
           <form class="form-horizontal">
             <div class="row">
-              <div class="{{AGT_SUPER_CODE_CLS}}">
+              <div class="form-group">
                 <div class="col-xs-0">
                 </div>
                 <p class="control-label col-xs-6">Leader's Leader Code</p>
-                <div class="col-xs-6">
-                  <input type="email" class="form-control" [(ngModel)]="AGT_LEADER_LEADER_CODE_V" name="AGT_LEADER_LEADER_CODE_V" id="AGT_LEADER_LEADER_CODE_V" placeholder="">
+                <div class="col-xs-5">
+                  <input type="email" class="form-control" [(ngModel)]="AGT_LEADER_LEADER_CODE_V" name="AGT_LEADER_LEADER_CODE_V" id="AGT_LEADER_LEADER_CODE_V"
+                    placeholder="">
                 </div>
               </div>
             </div>
@@ -1001,8 +1013,9 @@
                 <p class="control-label col-xs-6">Agent Status</p>
                 <div class="col-xs-6">
                   <select class="form-control" [(ngModel)]="AGT_STATUS" name="AGT_STATUS" id="AGT_STATUS" required>
-                    <option value="1">Yes</option>
-                    <option value="2">No</option>
+                    <option value="0">SELECT</option>
+                    <option value="1">YES</option>
+                    <option value="2">NO</option>
                 </select>
                 </div>
               </div>
@@ -1018,8 +1031,9 @@
                 <p class="control-label col-xs-6">Termination Status</p>
                 <div class="col-xs-6">
                   <select class="form-control" [(ngModel)]="AGT_TERMINATE_STATUS" name="AGT_TERMINATE_STATUS" id="AGT_TERMINATE_STATUS" required>
-                    <option value="1">Yes</option>
-                    <option value="2">No</option>
+                    <option value="0">SELECT</option>
+                    <option value="1">YES</option>
+                    <option value="2">NO</option>
                 </select>
                 </div>
               </div>
@@ -1035,8 +1049,9 @@
                 <p class="control-label col-xs-6">Com. Stop Status</p>
                 <div class="col-xs-6">
                   <select class="form-control" [(ngModel)]="AGT_STOP_COMM_STATUS" name="AGT_STOP_COMM_STATUS" id="AGT_STOP_COMM_STATUS" required>
-                    <option value="1">Yes</option>
-                    <option value="2">No</option>
+                    <option value="0">SELECT</option>
+                    <option value="1">YES</option>
+                    <option value="2">NO</option>
                 </select>
                 </div>
               </div>
@@ -1062,9 +1077,9 @@
                 <p class="control-label col-xs-4">ISS Status</p>
                 <div class="col-xs-6">
                   <select class="form-control" [(ngModel)]="AGT_ISS_STATUS" name="AGT_ISS_STATUS" id="AGT_ISS_STATUS" required>
-                    <option value="-1">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="2">No</option>
+                    <option value="0">SELECT</option>
+                    <option value="1">YES</option>
+                    <option value="2">NO</option>
                 </select>
                 </div>
               </div>
@@ -1091,9 +1106,9 @@
                 </div>
                 <p class="control-label col-xs-4">ISS Given Date</p>
                 <div class="col-xs-6">
-
-                  <datetime name="DateOfBirth" id="AGT_ISS_GIVEN_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_ISS_GIVEN_DATE" [timepicker]="false"></datetime>
-
+                  <div class="col-xs-12">
+                    <datetime name="DateOfBirth" id="AGT_ISS_GIVEN_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_ISS_GIVEN_DATE" [timepicker]="false"></datetime>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1107,9 +1122,9 @@
                 </div>
                 <p class="control-label col-xs-4">ISS Close Date</p>
                 <div class="col-xs-6">
-
-                  <datetime name="DateOfBirth" id="AGT_ISS_CLOSE_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_ISS_CLOSE_DATE" [timepicker]="false"></datetime>
-
+                  <div class="col-xs-12">
+                    <datetime name="DateOfBirth" id="AGT_ISS_CLOSE_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_ISS_CLOSE_DATE" [timepicker]="false"></datetime>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1130,9 +1145,9 @@
                 <p class="control-label col-xs-4">Retainer Status</p>
                 <div class="col-xs-6">
                   <select class="form-control" [(ngModel)]="AGT_RETAINER_STATUS" name="AGT_RETAINER_STATUS" id="AGT_RETAINER_STATUS" required>
-                    <option value="-1">Select</option>
-                    <option value="1">Yes</option>
-                    <option value="2">No</option>
+                    <option value="0">SELECT</option>
+                    <option value="1">YES</option>
+                    <option value="2">NO</option>
                 </select>
                 </div>
               </div>
@@ -1163,10 +1178,10 @@
 
                 <p class="control-label col-xs-5">Retainer Given date</p>
                 <div class="col-xs-6">
-
-                  <datetime name="DateOfBirth" id="AGT_RETAINER_GIVEN_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_RETAINER_GIVEN_DATE"
-                    [timepicker]="false"></datetime>
-
+                  <div class="col-xs-12">
+                    <datetime name="DateOfBirth" id="AGT_RETAINER_GIVEN_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_RETAINER_GIVEN_DATE"
+                      [timepicker]="false"></datetime>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1178,10 +1193,10 @@
 
                 <p class="control-label col-xs-5">Retainer Close Date</p>
                 <div class="col-xs-6">
-
-                  <datetime name="DateOfBirth" id="AGT_RETAINER_CLOSE_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_RETAINER_CLOSE_DATE"
-                    [timepicker]="false"></datetime>
-
+                  <div class="col-xs-12">
+                    <datetime name="DateOfBirth" id="AGT_RETAINER_CLOSE_DATE" [datepicker]="datepickerOpts" [(ngModel)]="AGT_RETAINER_CLOSE_DATE"
+                      [timepicker]="false"></datetime>
+                  </div>
 
                 </div>
               </div>
@@ -1193,7 +1208,7 @@
     <!--------------------End Third Column------------------>
   </div>
 
-
+  <!--Agent Search Start-->
   <div class="tab-pane" id="Search">
     <div class="well">
 
@@ -1221,8 +1236,6 @@
 
       </div>
     </div>
-
-
     <div class="well">
       <table class="table table-striped table-hover .table-bordered">
         <thead>
@@ -1264,10 +1277,16 @@
       <pagination-controls (pageChange)="page = $event" id="1" maxSize="5" directionLinks="true" autoHide="true">
       </pagination-controls>
     </div>
+  </div>
+  <!--Agent Search End-->
 
+
+
+  <!--Document Upload Start-->
+  <div class="tab-pane" id="Documents">
 
   </div>
-
+  <!--Document Upload End-->
 
 
   <!--################################### END LEVEL TAB #####################################-->

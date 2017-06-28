@@ -1,5 +1,5 @@
 export interface IAgent {
-    AGT_ID: number;
+    AGT_ID: string;
     AGT_CODE : string;
     AGT_CODE_ID: number;
     AGT_TYPE_ID: number;
@@ -67,5 +67,6 @@ export interface IAgent {
     AGT_LEADER_LEADER_CODE_V: string;
     AGT_LEADER_AGENT_CODE_H: string;
     AGT_LEADER_LEADER_CODE_H: string;
+    AGT_CREATED_BY: string;
 
 }

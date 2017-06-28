@@ -1,6 +1,6 @@
 export interface IAgentSearch {
 
-    AGT_ID: number;
+    AGT_ID: string;
     AGT_CODE: string;
     AGT_NAME: string;
     AGT_ADDRESS: string;
