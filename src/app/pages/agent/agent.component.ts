@@ -304,10 +304,11 @@ export class AgentComponent implements OnInit {
 
 
 
+
     this.UploadDocTypeId = docTypeId;
     console.log('doc type-' + this.UploadDocTypeId);
 
-
+//
     // this.DocUploadUrl = this.sanitizer.bypassSecurityTrustResourceUrl(URL_CONST.URL_PREFIX + 'api/Main/UploadDocument');
     //this.DocUploadUrl = 'http://localhost:46817/api/Main/UploadDocument?sTempSeqId=' +'aaaaasas';
     // this.DocUploadUrl = URL_CONST.URL_PREFIX + 'api/Main/UploadDocument?sTempSeqId=' + this.TempSeqId;
