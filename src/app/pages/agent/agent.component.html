@@ -1359,9 +1359,59 @@
 
   <!--Document Upload Start-->
   <div class="tab-pane" id="Documents">
-
-  </div>
-  <!--Document Upload End-->
+    <div class="well">
 
 
-  <!--################################### END LEVEL TAB #####################################-->
+      <div class="row">
+
+        <div class="col-sm-6">
+          <div class="form-group">
+            <p class="control-label col-xs-5">Document Type</p>
+            <div class="col-lg-4">
+              <select type="text" class="form-control input-sm" placeholder="Document Type" [(ngModel)]="AGT_LEVEL_CODE" name="AGT_LEVEL_CODE" id="AGT_LEVEL_CODE"
+                required (ngModelChange)="onSelectOfUploadDocTypeId($event)">
+              <option *ngFor="let DocType of UploadDocTypeList" value={{DocType.DocTypeId}}>{{DocType.DocTypeName}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="col-sm-1">
+          <div class="button-container">
+            <label class="upload-button is-pulled-left">
+                    <input type="file"
+                class="hidden"
+                ngFileSelect
+                [options]="uploaderOptions"
+                [events]="inputUploadEvents"
+                (onUpload)="handleUpload($event)"
+                
+                (beforeUpload)="beforeUpload($event)">
+                  <div class="btn btn-info">Browse</div> 
+                  </label>
+          </div>
+        </div>
+
+        <div class="col-sm-1">
+
+
+
+          <div class="form-group">
+            <button type="button" class="btn btn-info" (click)="startUpload()">Upload</button>
+          </div>
+
+
+        </div>
+        <!--<div class="col-sm-1">
+          <div class="form-group">
+            <button class="btn btn-info" (click)="docUploadModal.close()">close</button>
+          </div>
+        </div>-->
+      </div>
+
+    </div>
+    <!--Document Upload End-->
+
+
+    <!--################################### END LEVEL TAB #####################################-->

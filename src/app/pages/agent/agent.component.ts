@@ -37,6 +37,8 @@ import { IUser } from '../../shared/models/user/user.model';
 import { UUID } from 'angular2-uuid';
 import { NgUploaderOptions, UploadedFile, UploadRejected } from 'ngx-uploader';
 
+import { URL_CONST } from '../../shared/config/url.constants';
+
 declare var jQuery: any;
 
 @Component({
@@ -236,17 +238,17 @@ export class AgentComponent implements OnInit {
   datepickerOpts = {
     format: 'dd/mm/yyyy'
   }
-  constructor(private BranchService: BranchService, private BankService: BankService, 
-  private BankBranchService: BankBranchService, private AgentTypeService: AgentTypeService,
-   private AgentCodeService: AgentCodeService, private AgentService: AgentService, 
-   private LevelService: LevelService, private UploadDocTypeService: UploadDocTypeService, 
-   moment: MomentModule,
-    @Inject(NgZone) private zone: NgZone) { 
+  constructor(private BranchService: BranchService, private BankService: BankService,
+    private BankBranchService: BankBranchService, private AgentTypeService: AgentTypeService,
+    private AgentCodeService: AgentCodeService, private AgentService: AgentService,
+    private LevelService: LevelService, private UploadDocTypeService: UploadDocTypeService,
+    moment: MomentModule,
+    @Inject(NgZone) private zone: NgZone) {
 
 
 
     this.inputUploadEvents = new EventEmitter<string>();
-   }
+  }
 
 
   ngOnInit() {
@@ -286,7 +288,7 @@ export class AgentComponent implements OnInit {
         if (data && data.response) {
           // this.response = JSON.parse(data.response);
           console.log(JSON.parse(data.response));
-         // this.showSuccess("Document Successfully Uploaded.");
+          // this.showSuccess("Document Successfully Uploaded.");
 
         }
       });
@@ -298,7 +300,7 @@ export class AgentComponent implements OnInit {
   }
 
 
-  onSelectOfUploadDocTypeId(docTypeId) {
+    onSelectOfUploadDocTypeId(docTypeId) {
 
 
 
@@ -307,10 +309,17 @@ export class AgentComponent implements OnInit {
 
 
     // this.DocUploadUrl = this.sanitizer.bypassSecurityTrustResourceUrl(URL_CONST.URL_PREFIX + 'api/Main/UploadDocument');
-    this.DocUploadUrl = 'http://localhost:46817/api/Main/UploadDocument?sTempSeqId=' +'aaaaasas';
-   // this.DocUploadUrl = URL_CONST.URL_PREFIX + 'api/Main/UploadDocument?sTempSeqId=' + this.TempSeqId;
+    //this.DocUploadUrl = 'http://localhost:46817/api/Main/UploadDocument?sTempSeqId=' +'aaaaasas';
+    // this.DocUploadUrl = URL_CONST.URL_PREFIX + 'api/Main/UploadDocument?sTempSeqId=' + this.TempSeqId;
+ //api/UploadDoc/UploadDocument?sTempSeqId={sTempSeqId} 	
 
-alert('awa awa');
+
+
+    this.DocUploadUrl = URL_CONST.URL_PREFIX + 'api/UploadDoc/UploadDocument?sTempSeqId=' +'aaaaasas';
+
+
+
+    alert('awa awa');
 
     console.log('url - ' + this.DocUploadUrl);
 
@@ -336,7 +345,6 @@ alert('awa awa');
 
 
   getUploadDocTypes() {
-    alert('dd');
     this.UploadDocTypeService.getUploadDocTypes()
       .subscribe((data) => {
 
