@@ -1,5 +1,6 @@
 import { Component, OnInit, NgZone, Inject, EventEmitter } from '@angular/core';
 
+import { Router } from '@angular/router';
 import { BranchService } from '../../shared/services/branch/branch.service';
 import { IBranch } from '../../shared/models/Branch.models';
 
@@ -23,8 +24,14 @@ import { IAgentSearch } from '../../shared/models/AgentSearch';
 import { UploadDocTypeService } from '../../shared/services/UploadDocType/upload-doc-type.service';
 import { IUploadDocType } from '../../shared/models/UploadDocType.models';
 
+import { UploadDocService } from '../../shared/services/UploadDoc/upload-doc.service';
+import { IUploadDoc } from '../../shared/models/UploadDoc.models';
+
 import { LevelService } from '../../shared/services/Level/level.service';
 import { ILevel } from '../../shared/models/Level.models';
+
+import { LanguageService } from '../../shared/services/Language/language.service';
+import { ILanguage } from '../../shared/models/Language.model';
 
 
 import { DatePipe } from '@angular/common';
@@ -62,6 +69,10 @@ export class AgentComponent implements OnInit {
   AgentSearchList: Array<IAgentSearch> = [];
   AgentLevelList: Array<ILevel> = [];
   UploadDocTypeList: Array<IUploadDocType> = [];
+  UploadDocList: Array<IUploadDocType> = [];
+  LanguageList: Array<ILanguage> = [];
+
+
 
   SelectedBranchID: string = '';
   SelectedBankID: string = '';
@@ -79,6 +90,7 @@ export class AgentComponent implements OnInit {
   AGT_LINE_OF_BUSINESS: number = 0;
   AGT_CHANNEL: string = '';
   AGT_LEVEL: number = 0;
+  AGT_LANGUAGE: number = 0;
   AGT_SUPER_CODE: string = '';
   AGT_TITLE: string = '';
   AGT_FIRST_NAME: string = '';
@@ -100,10 +112,10 @@ export class AgentComponent implements OnInit {
   AGT_APPOINT_DATE: Date;
   AGT_SLII_EXAM: number = 0;
   AGT_SLII_EXAM_DATE: Date;
-  AGT_AGMT_RECEIVED: number;
-  AGT_AGMT_DATE: Date;
-  AGT_APP_RECEIVED: number;
-  AGT_APP_RECEIVED_DATE: Date;
+  AGT_AGMT_DATE_RECEIVED: Date;
+  AGT_AGMT_DATE_ISSUED: Date;
+  AGT_APP_DATE_RECEIVED: number;
+  AGT_APP_DATE_ISSUED: Date;
   AGT_TRNS_BRANCH_CODE: string;
   AGT_TRNS_BRANCH_DATE: Date;
   AGT_STOP_COMM_DATE: Date;
@@ -137,6 +149,11 @@ export class AgentComponent implements OnInit {
   AGT_LEADER_AGENT_CODE_H: string;
   AGT_LEADER_LEADER_CODE_H: string;
   AGT_CREATED_BY: string;
+
+  AGT_IMAGE: string;
+
+
+  rtnDate: Date;
   //-----------------------------
 
   isAgentDetailsValid: boolean = true;
@@ -222,6 +239,20 @@ export class AgentComponent implements OnInit {
   AGT_SEARCH_MOBILE: string;
   //-------------------------------------------------
 
+  //Agent Upload Docs--------------------------------
+  AGT_PROFILE_ID: number = 0;
+  AGT_PROFILE_AGT_CODE: string = "";
+  AGT_PROFILE_DOC_TYPE_ID: number = 0;
+  AGT_PROFILE_DOC_TYPE_DESC: string = "";
+  AGT_PROFILE_DOC_URL: string = "";
+  AGT_PROFILE_CREATEDBY: string = "";
+  AGT_PROFILE_CREATDEDATE: string = "";
+  AGT_PROFILE_EFFECTIVEENDDATE: string = "";
+
+  UPLOAD_DOC_DESC: string = "";
+  //-------------------------------------------------
+
+
   UploadDocTypeId: number;
   uploadDocTypeList: Array<IUploadDocType> = [];
   DocUploadUrl: any;
@@ -241,15 +272,15 @@ export class AgentComponent implements OnInit {
   constructor(private BranchService: BranchService, private BankService: BankService,
     private BankBranchService: BankBranchService, private AgentTypeService: AgentTypeService,
     private AgentCodeService: AgentCodeService, private AgentService: AgentService,
-    private LevelService: LevelService, private UploadDocTypeService: UploadDocTypeService,
-    moment: MomentModule,
+    private LevelService: LevelService, private UploadDocTypeService: UploadDocTypeService, 
+    private UploadDocService: UploadDocService, private LanguageService:LanguageService,
+    moment: MomentModule, private router: Router,
     @Inject(NgZone) private zone: NgZone) {
 
 
 
     this.inputUploadEvents = new EventEmitter<string>();
   }
-
 
   ngOnInit() {
     try {
@@ -258,6 +289,8 @@ export class AgentComponent implements OnInit {
       this.getBanks();
       this.getAgentTypes();
       this.getLevels();
+      this.getLanguage();
+
       this.clearValues();
 
       this.getUploadDocTypes();
@@ -270,8 +303,78 @@ export class AgentComponent implements OnInit {
 
   }
 
+  getLanguage() {
+    this.LanguageService.getLanguage()
+      .subscribe((data) => {
+
+        this.LanguageList= data;
+        console.log(JSON.stringify(data));
+      },
+      (err) => console.log(err));
+  }
+
   startUpload() {
+
+    
+    if (this.AGT_CODE == '' || this.AGT_CODE == null) {
+      alert('Please Search and Select a ..!');
+
+    }
+
     this.inputUploadEvents.emit('startUpload');
+
+    this.getProfilePicByAgentID(this.AGT_CODE);
+
+    this.getUploadDocByAgentID(this.AGT_CODE);
+
+    alert('Successfully Uploaded....!');
+
+  }
+
+  getProfilePicByAgentID(AgentCode) {
+
+    this.UploadDocService.getProfilePicByAgentID(AgentCode)
+      .subscribe((data) => {
+
+        console.log(data);
+
+        let obj: IUploadDoc = JSON.parse(JSON.stringify(data));
+
+
+        this.AGT_PROFILE_ID = obj.Id;
+        this.AGT_PROFILE_AGT_CODE = obj.AgtCode;
+        this.AGT_PROFILE_DOC_TYPE_ID = obj.DocTypeId;
+        this.AGT_PROFILE_DOC_TYPE_DESC = obj.DocTypeDesc.toString();
+        this.AGT_PROFILE_DOC_URL = obj.DocUrl.toString();
+        this.AGT_PROFILE_CREATEDBY = obj.CreatedBy;
+        this.AGT_PROFILE_CREATDEDATE = obj.CreatedDate;
+        this.AGT_PROFILE_EFFECTIVEENDDATE = obj.EffectiveEndDate;
+
+        console.log(obj);
+
+
+
+        this.AGT_IMAGE = URL_CONST.HOSTED_URL_PREFIX + this.AGT_PROFILE_DOC_URL;
+
+        //  Id:number;
+        //  AgtId:number;
+        //  DocTypeId:number;
+        //  DocTypeDesc:String;
+        //  DocUrl:string;
+        //  CreatedBy:string ;
+        //  CreatedDate:string ;
+        //  EffectiveEndDate:string ;
+
+        console.log(this.AGT_IMAGE);
+        //this.AGT_IMAGE = "http://192.168.10.172:8082/comm_docs/2017/123/IMG_6510.JPG";
+      });
+  }
+
+  setDocumentPath = function (index, DocPath) {
+
+
+    window.open('http://192.168.10.172:8082/comm_docs' + DocPath);
+
   }
 
   beforeUpload(uploadingFile: UploadedFile): void {
@@ -299,36 +402,39 @@ export class AgentComponent implements OnInit {
     this.previewData = data;
   }
 
+  onSelectOfUploadDocTypeId(docTypeId) {
 
-    onSelectOfUploadDocTypeId(docTypeId) {
 
 
+    if (this.UPLOAD_DOC_DESC == '') {
+      alert('Please enter document description..!');
+
+    }
 
 
     this.UploadDocTypeId = docTypeId;
     console.log('doc type-' + this.UploadDocTypeId);
 
-//
     // this.DocUploadUrl = this.sanitizer.bypassSecurityTrustResourceUrl(URL_CONST.URL_PREFIX + 'api/Main/UploadDocument');
     //this.DocUploadUrl = 'http://localhost:46817/api/Main/UploadDocument?sTempSeqId=' +'aaaaasas';
     // this.DocUploadUrl = URL_CONST.URL_PREFIX + 'api/Main/UploadDocument?sTempSeqId=' + this.TempSeqId;
- //api/UploadDoc/UploadDocument?sTempSeqId={sTempSeqId} 	
+    //api/UploadDoc/UploadDocument?sTempSeqId={sTempSeqId} 	
 
+    // alert(URL_CONST.URL_PREFIX + 'api/UploadDoc/UploadDocument?vAGT_CODE=' + this.AGT_CODE);
 
-
-    this.DocUploadUrl = URL_CONST.URL_PREFIX + 'api/UploadDoc/UploadDocument?sTempSeqId=' +'aaaaasas';
-
-
-
-    alert('awa awa');
+    this.DocUploadUrl = URL_CONST.URL_PREFIX + 'api/UploadDoc/UploadDocument?vAGT_CODE=' + this.AGT_CODE;
 
     console.log('url - ' + this.DocUploadUrl);
+
+
 
     this.uploaderOptions = new NgUploaderOptions({
       url: this.DocUploadUrl,
       filterExtensions: true,
-      allowedExtensions: ['jpg', 'pdf'],
-      data: { tempSeqId: '123', docTypeId: this.UploadDocTypeId },
+      allowedExtensions: ['jpg', 'pdf', 'txt'],
+      // data: { tempSeqId: '123', docTypeId: this.UploadDocTypeId },
+      //data: { AgentID: this.AGT_ID, DocTypeID: this.UploadDocTypeId, UserID:this.User.UserName},
+      data: { AgentCode: this.AGT_CODE, DocTypeID: this.UploadDocTypeId, UserID: this.User.UserName, DocDescription: this.UPLOAD_DOC_DESC },
       autoUpload: false,
       fieldName: 'file',
       fieldReset: true,
@@ -342,8 +448,15 @@ export class AgentComponent implements OnInit {
     console.log('options - ' + JSON.stringify(this.uploaderOptions));
   }
 
+  getUploadDocByAgentID(AGENT_ID) {
+    this.UploadDocService.getUploadDocByAgentID(AGENT_ID)
+      .subscribe((data) => {
+        console.log(data);
 
-
+        this.UploadDocList = data;
+      },
+      (err) => console.log(err));
+  }
 
   getUploadDocTypes() {
     this.UploadDocTypeService.getUploadDocTypes()
@@ -388,41 +501,68 @@ export class AgentComponent implements OnInit {
       (err) => console.log(err));
   }
 
+  //--------------Check Date when Save-------------
+  SetDateFormat(vDate): Date {
+    var moment = require('moment');
+
+    if (vDate == undefined || vDate == '') {//alert(vDate);
+      this.rtnDate = moment('01/01/1900'.toString()).format('DD/MM/YYYY');
+    } else {
+      this.rtnDate = moment(vDate).format('DD/MM/YYYY');
+    }
+    return this.rtnDate;
+  }
+  //-------------------------------------------------------------
+  //-------------Check Date when Retrive-----------
+  SetDateFormatNew(vDate): Date {
+    var moment = require('moment');
+
+    console.log(vDate);
+
+    if ((vDate == '01/01/2000 00:00:00') || (moment(vDate.toString().substr(0, 10), 'DD/MM/YYYY').toDate() == moment('01/01/1900 00:00:00'.toString().substr(0, 10), 'DD/MM/YYYY').toDate()) || (vDate=='01/01/1900 12:00:00 AM')) {//alert(vDate);
+      this.rtnDate = null;//moment('01/01/1900'.toString()).format('DD/MM/YYYY');
+    } else {
+      this.rtnDate = moment(vDate.toString().substr(0, 10), 'DD/MM/YYYY').toDate();// moment(vDate).format('DD/MM/YYYY');
+    }
+    return this.rtnDate;
+  }
+  //-------------------------------------------------------------
   SaveRecord() {
     try {
 
-
-
-      // this.validateFields();
-      // if (!this.isAgentDetailsValid) {
-      //   return;
-      // }
-
+      this.validateFields();
+      if (!this.isAgentDetailsValid) {
+        alert('Please check mandotory fields.....');
+        return;
+      }
 
 
       var moment = require('moment');
 
-      var FormattedAGT_DOB = moment(this.AGT_DOB).format('DD/MM/YYYY');
-      var FormattedAGT_ID_ISSUED_DATE = moment(this.AGT_ID_ISSUED_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_APPOINT_DATE = moment(this.AGT_APPOINT_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_SLII_EXAM_DATE = moment(this.AGT_SLII_EXAM_DATE).format('DD/MM/YYYY');
 
-      var FormattedAGT_AGMT_DATE = moment(this.AGT_AGMT_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_APP_RECEIVED_DATE = moment(this.AGT_APP_RECEIVED_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_STOP_COMM_DATE = moment(this.AGT_STOP_COMM_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_RELEASE_COMM_DATE = moment(this.AGT_RELEASE_COMM_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_TERMINATE_NOTICE_DATE = moment(this.AGT_TERMINATE_NOTICE_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_TERMINATE_DATE = moment(this.AGT_TERMINATE_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_BLACK_LISTED_DATE = moment(this.AGT_BLACK_LISTED_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_REJOINED_DATE = moment(this.AGT_REJOINED_DATE).format('DD/MM/YYYY');
+      var FormattedAGT_DOB = this.SetDateFormat(this.AGT_DOB);//moment(this.AGT_DOB).format('DD/MM/YYYY');
+      var FormattedAGT_ID_ISSUED_DATE = this.SetDateFormat(this.AGT_ID_ISSUED_DATE);
+      var FormattedAGT_APPOINT_DATE = this.SetDateFormat(this.AGT_APPOINT_DATE);
+      var FormattedAGT_SLII_EXAM_DATE = this.SetDateFormat(this.AGT_SLII_EXAM_DATE);
 
-      var FormattedAGT_ISS_GIVEN_DATE = moment(this.AGT_ISS_GIVEN_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_ISS_CLOSE_DATE = moment(this.AGT_ISS_CLOSE_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_RETAINER_GIVEN_DATE = moment(this.AGT_RETAINER_GIVEN_DATE).format('DD/MM/YYYY');
-      var FormattedAGT_RETAINER_CLOSE_DATE = moment(this.AGT_RETAINER_CLOSE_DATE).format('DD/MM/YYYY');
+      var FormattedAGT_AGMT_DATE_RECEIVED = this.SetDateFormat(this.AGT_AGMT_DATE_RECEIVED);
+      var FormattedAGT_AGMT_DATE_ISSUED = this.SetDateFormat(this.AGT_AGMT_DATE_ISSUED);
+      var FormattedAGT_APP_DATE_RECEIVED = this.SetDateFormat(this.AGT_APP_DATE_RECEIVED);
+      var FormattedAGT_APP_DATE_ISSUED = this.SetDateFormat(this.AGT_APP_DATE_ISSUED);
 
-      var FormattedAGT_TRNS_BRANCH_DATE = moment(this.AGT_TRNS_BRANCH_DATE).format('DD/MM/YYYY');
+      var FormattedAGT_STOP_COMM_DATE = this.SetDateFormat(this.AGT_STOP_COMM_DATE);
+      var FormattedAGT_RELEASE_COMM_DATE = this.SetDateFormat(this.AGT_RELEASE_COMM_DATE);
+      var FormattedAGT_TERMINATE_NOTICE_DATE = this.SetDateFormat(this.AGT_TERMINATE_NOTICE_DATE);
+      var FormattedAGT_TERMINATE_DATE = this.SetDateFormat(this.AGT_TERMINATE_DATE);
+      var FormattedAGT_BLACK_LISTED_DATE = this.SetDateFormat(this.AGT_BLACK_LISTED_DATE);
+      var FormattedAGT_REJOINED_DATE = this.SetDateFormat(this.AGT_REJOINED_DATE);
+      var FormattedAGT_ISS_GIVEN_DATE = this.SetDateFormat(this.AGT_ISS_GIVEN_DATE);
+      var FormattedAGT_ISS_CLOSE_DATE = this.SetDateFormat(this.AGT_ISS_CLOSE_DATE);
+      var FormattedAGT_RETAINER_GIVEN_DATE = this.SetDateFormat(this.AGT_RETAINER_GIVEN_DATE);
+      var FormattedAGT_RETAINER_CLOSE_DATE = this.SetDateFormat(this.AGT_RETAINER_CLOSE_DATE);
+      var FormattedAGT_TRNS_BRANCH_DATE = this.SetDateFormat(this.AGT_TRNS_BRANCH_DATE);
 
+      // alert(this.AGT_LEVEL);
 
       let objAgent: IAgent = {
         AGT_ID: this.AGT_ID,
@@ -435,7 +575,7 @@ export class AgentComponent implements OnInit {
         AGT_SUB_CODE: this.AGT_SUB_CODE,
         AGT_LINE_OF_BUSINESS: this.AGT_LINE_OF_BUSINESS,
         AGT_CHANNEL: this.AGT_CHANNEL,
-        AGT_LEVEL: this.AGT_LEVEL,
+        //AGT_LEVEL: this.AGT_LEVEL,
         AGT_SUPER_CODE: this.AGT_SUPER_CODE,
         AGT_TITLE: this.AGT_TITLE,
         AGT_FIRST_NAME: this.AGT_FIRST_NAME,
@@ -457,10 +597,12 @@ export class AgentComponent implements OnInit {
         AGT_APPOINT_DATE: FormattedAGT_APPOINT_DATE,
         AGT_SLII_EXAM: this.AGT_SLII_EXAM,
         AGT_SLII_EXAM_DATE: FormattedAGT_SLII_EXAM_DATE,
-        AGT_AGMT_RECEIVED: this.AGT_AGMT_RECEIVED,
-        AGT_AGMT_DATE: FormattedAGT_AGMT_DATE,
-        AGT_APP_RECEIVED: this.AGT_APP_RECEIVED,
-        AGT_APP_RECEIVED_DATE: FormattedAGT_APP_RECEIVED_DATE,
+
+        AGT_AGMT_DATE_RECEIVED:  FormattedAGT_AGMT_DATE_RECEIVED,
+        AGT_AGMT_DATE_ISSUED: FormattedAGT_AGMT_DATE_ISSUED,
+        AGT_APP_DATE_RECEIVED: FormattedAGT_APP_DATE_RECEIVED,
+        AGT_APP_DATE_ISSUED: FormattedAGT_APP_DATE_ISSUED,
+
         AGT_TRNS_BRANCH_CODE: this.AGT_TRNS_BRANCH_CODE,
         AGT_TRNS_BRANCH_DATE: FormattedAGT_TRNS_BRANCH_DATE,
         AGT_STOP_COMM_DATE: FormattedAGT_STOP_COMM_DATE,
@@ -477,7 +619,9 @@ export class AgentComponent implements OnInit {
         AGT_REMARKS: this.AGT_REMARKS,
         AGT_BUSINESS_TYPE: this.AGT_BUSINESS_TYPE,
         AGT_LEVEL_CODE: this.AGT_LEVEL_CODE,
-        AGT_LEADER_CODE: this.AGT_LEADER_CODE,
+        AGT_LEVEL: this.AGT_LEVEL,
+        AGT_LANGUAGE: this.AGT_LANGUAGE,
+        AGT_LEADER_CODE: '-',//this.AGT_LEADER_CODE,
         AGT_STATUS: this.AGT_STATUS,
         AGT_TERMINATE_STATUS: this.AGT_TERMINATE_STATUS,
         AGT_STOP_COMM_STATUS: this.AGT_STOP_COMM_STATUS,
@@ -496,7 +640,6 @@ export class AgentComponent implements OnInit {
         AGT_CREATED_BY: this.User.UserName//this.AGT_CREATED_BY
 
       }
-
 
       console.log(objAgent);
       console.log(JSON.stringify(objAgent));
@@ -570,10 +713,71 @@ export class AgentComponent implements OnInit {
       },
       (err) => console.log(err));
   }
+  //----------Start Validate fields-------------
+  //----------Start Validate fields-------------
 
-  //----------Start Validate fields-------------
-  //----------Start Validate fields-------------
   public validateFields() {
+
+    this.isAgentDetailsValid = true;
+
+    if (this.AGT_TYPE_ID == 0) {//column name
+      this.AGT_TYPE_ID_CLS = "has-error";
+      this.isAgentDetailsValid = false;
+    } else {
+      this.AGT_TYPE_ID_CLS = "form-group"; //AgentTypeClass
+    }
+
+    // if (this.AGT_CODE_ID == 0) {
+    //   this.AGT_CODE_ID_CLS = "has-error";console.log(this.AGT_CODE_ID);
+    //   this.isAgentDetailsValid = false;
+    // } else {
+    //   this.AGT_CODE_ID_CLS = "form-group"; //AgentTypeClass
+    // }
+
+    if (this.AGT_BRANCH_CODE == '0') {
+      this.AGT_BRANCH_CODE_CLS = "has-error";
+      this.isAgentDetailsValid = false;
+    } else {
+      this.AGT_BRANCH_CODE_CLS = "form-group"; //AgentTypeClass
+    }
+
+    if (this.AGT_TITLE == '0') {
+      this.AGT_TITLE_CLS = "has-error";
+      this.isAgentDetailsValid = false;
+    } else {
+      this.AGT_TITLE_CLS = "form-group"; //AgentTypeClass
+    }
+
+    if (this.AGT_FIRST_NAME == '') {
+      this.AGT_FIRST_NAME_CLS = "has-error";
+      this.isAgentDetailsValid = false;
+    } else {
+      this.AGT_FIRST_NAME_CLS = "form-group"; //AgentTypeClass
+    }
+
+    if (this.AGT_LAST_NAME == '') {
+      this.AGT_LAST_NAME_CLS = "has-error";
+      this.isAgentDetailsValid = false;
+    } else {
+      this.AGT_LAST_NAME_CLS = "form-group"; //AgentTypeClass
+    }
+
+    if (this.AGT_ADD1 == '') {
+      this.AGT_ADD1_CLS = "has-error";
+      this.isAgentDetailsValid = false;
+    } else {
+      this.AGT_ADD1_CLS = "form-group"; //AgentTypeClass
+    }
+
+    if (this.AGT_APPOINT_DATE == undefined) {
+      this.AGT_APPOINT_DATE_CLS = "has-error";
+      this.isAgentDetailsValid = false;
+    } else {
+      this.AGT_APPOINT_DATE_CLS = "form-group"; //AgentTypeClass
+    }
+  }
+
+  public validateFieldsOLD() {
 
     this.isAgentDetailsValid = true;
 
@@ -805,19 +1009,19 @@ export class AgentComponent implements OnInit {
       this.AGT_SLII_EXAM_DATE_CLS = "form-group"; //AgentTypeClass
     }
 
-    if (this.AGT_AGMT_RECEIVED == undefined || this.AGT_AGMT_DATE == null) {
-      this.AGT_AGMT_RECEIVED_CLS = "has-error";
-      this.isAgentDetailsValid = false;
-    } else {
-      this.AGT_AGMT_RECEIVED_CLS = "form-group"; //AgentTypeClass
-    }
+    // if (this.AGT_AGMT_RECEIVED == undefined || this.AGT_AGMT_DATE == null) {
+    //   this.AGT_AGMT_RECEIVED_CLS = "has-error";
+    //   this.isAgentDetailsValid = false;
+    // } else {
+    //   this.AGT_AGMT_RECEIVED_CLS = "form-group"; //AgentTypeClass
+    // }
 
-    if (this.AGT_APP_RECEIVED == undefined || this.AGT_APP_RECEIVED_DATE == null) {
-      this.AGT_APP_RECEIVED_CLS = "has-error";
-      this.isAgentDetailsValid = false;
-    } else {
-      this.AGT_APP_RECEIVED_CLS = "form-group"; //AgentTypeClass
-    }
+    // if (this.AGT_APP_RECEIVED == undefined || this.AGT_APP_RECEIVED_DATE == null) {
+    //   this.AGT_APP_RECEIVED_CLS = "has-error";
+    //   this.isAgentDetailsValid = false;
+    // } else {
+    //   this.AGT_APP_RECEIVED_CLS = "form-group"; //AgentTypeClass
+    // }
 
     // if (this.AGT_APP_RECEIVED == 0 ) {
     //   this.AGT_APP_RECEIVED_CLS = "has-error";
@@ -1043,7 +1247,6 @@ export class AgentComponent implements OnInit {
 
   }
   //-----------End Validate fields--------------
-
   clearValues() {
 
 
@@ -1053,73 +1256,79 @@ export class AgentComponent implements OnInit {
     this.AGT_CODE = '';
     this.AGT_CODE_ID = 0;
     this.AGT_TYPE_ID = 0;
-    this.AGT_MDRT_STATUS = null;
-    this.AGT_MDRT_YEAR = null;
-    this.AGT_SYSTEM_ID = 'AGT_SYSTEM_ID';
-    this.AGT_SUB_CODE = 'AGT_SUB_CODE';
-    this.AGT_LINE_OF_BUSINESS = 1;
-    this.AGT_CHANNEL = 'AGT_CHANNEL';
-    this.AGT_LEVEL = 1,
-      this.AGT_SUPER_CODE = 'AGT_SUPER_CODE';
-    this.AGT_TITLE = 'Mr';
-    this.AGT_FIRST_NAME = 'AGT_FIRST_NAME';
-    this.AGT_LAST_NAME = 'AGT_LAST_NAME';
-    this.AGT_ADD1 = 'AGT_ADD1'
-    this.AGT_ADD2 = 'AGT_ADD2';
-    this.AGT_ADD3 = 'AGT_ADD3';
-    this.AGT_NIC_NO = 'AGT_NIC_NO';
-    this.AGT_DOB = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_MOBILE = 'AGT_MOBILE';
-    this.AGT_TEL_NO = 'AGT_TEL_NO';
-    this.AGT_FAX_NO = 'AGT_FAX_NO'
-    this.AGT_BRANCH_CODE = 'KDY';
-    this.AGT_BANK_ID = 1;
-    this.AGT_BANK_BRANCH_ID = 1;
-    this.AGT_BANK_ACC_NO = 'AGT_BANK_ACC_NO';
-    this.AGT_ID_ISSUED = 1;
-    this.AGT_ID_ISSUED_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_APPOINT_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_SLII_EXAM = 1;
-    this.AGT_SLII_EXAM_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_AGMT_RECEIVED = 1;
-    this.AGT_AGMT_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_APP_RECEIVED = 1;
-    this.AGT_APP_RECEIVED_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_TRNS_BRANCH_CODE = 'HDO';
-    this.AGT_TRNS_BRANCH_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_STOP_COMM_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_STOP_COMM_REASON = 'AGT_STOP_COMM_REASON';
-    this.AGT_RELEASE_COMM_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_RELEASE_COMM_REASON = 'AGT_RELEASE_COMM_REASON';
-    this.AGT_CUSTOMER_COMPLAIN = 'AGT_CUSTOMER_COMPLAIN';
-    this.AGT_TERMINATE_NOTICE_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_TERMINATE_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_TERMINATE_REASON = 'AGT_DUES_TO_COMPANY';
-    this.AGT_BLACK_LISTED_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_DUES_TO_COMPANY = 'AGT_DUES_TO_COMPANY';
-    this.AGT_REJOINED_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_REMARKS = 'AGT_REMARKS';
+    this.AGT_MDRT_STATUS = 0;
+    this.AGT_MDRT_YEAR = 0;
+    this.AGT_SYSTEM_ID = '-';
+    this.AGT_SUB_CODE = '-';
+    this.AGT_LINE_OF_BUSINESS = 0;
+    this.AGT_CHANNEL = '-';
+    this.AGT_LEVEL = 0,
+    this.AGT_LANGUAGE = 0,
+    this.AGT_SUPER_CODE = '-';
+    this.AGT_TITLE = "0";
+    this.AGT_FIRST_NAME = '';
+    this.AGT_LAST_NAME = '';
+    this.AGT_ADD1 = '';
+    this.AGT_ADD2 = '-';
+    this.AGT_ADD3 = '-';
+    this.AGT_NIC_NO = '';
+    this.AGT_DOB = null;//moment('01/01/1900'.toString().substr(0, 10), 'DD/MM/YYYY').toDate();//
+    this.AGT_MOBILE = '-';
+    this.AGT_TEL_NO = '-';
+    this.AGT_FAX_NO = '-';
+    this.AGT_BRANCH_CODE = '0';
+    this.AGT_BANK_ID = 0;
+    this.AGT_BANK_BRANCH_ID = 0;
+    this.AGT_BANK_ACC_NO = '-';
+    this.AGT_ID_ISSUED = 0;
+    this.AGT_ID_ISSUED_DATE = null;//
+    this.AGT_APPOINT_DATE = null;
+    this.AGT_SLII_EXAM = 0;
+    this.AGT_SLII_EXAM_DATE = null;
+    this.AGT_AGMT_DATE_RECEIVED = null;
+    this.AGT_AGMT_DATE_ISSUED = null;
+    this.AGT_APP_DATE_RECEIVED = null;
+    this.AGT_APP_DATE_ISSUED = null;
+    this.AGT_TRNS_BRANCH_CODE = "0";
+    this.AGT_TRNS_BRANCH_DATE = null;
+    this.AGT_STOP_COMM_DATE = null;
+    this.AGT_STOP_COMM_REASON = '-';
+    this.AGT_RELEASE_COMM_DATE = null;
+    this.AGT_RELEASE_COMM_REASON = '-';
+    this.AGT_CUSTOMER_COMPLAIN = '-';
+    this.AGT_TERMINATE_NOTICE_DATE = null;
+    this.AGT_TERMINATE_DATE = null;
+    this.AGT_TERMINATE_REASON = '-';
+    this.AGT_BLACK_LISTED_DATE = null;
+    this.AGT_DUES_TO_COMPANY = '-';
+    this.AGT_REJOINED_DATE = null;
+    this.AGT_REMARKS = '-';
     this.AGT_BUSINESS_TYPE = 1;
-    this.AGT_LEVEL_CODE = 'AGT_LEVEL_CODE';
-    this.AGT_LEADER_CODE = 'AGT_LEADER_CODE';
-    this.AGT_STATUS = 1;
-    this.AGT_TERMINATE_STATUS = 1;
-    this.AGT_STOP_COMM_STATUS = 1;
-    this.AGT_ISS_STATUS = 1;
-    this.AGT_ISS_AMOUNT = 10000;
-    this.AGT_ISS_GIVEN_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_ISS_CLOSE_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_RETAINER_STATUS = 1;
-    this.AGT_RETAINER_AMOUNT = 10000;
-    this.AGT_RETAINER_GIVEN_DATE = moment('10/10/2017').format('DD/MM/YYYY');
-    this.AGT_RETAINER_CLOSE_DATE = moment('10/10/2017').format('DD/MM/YYYY');
+    this.AGT_LEVEL_CODE = '-';
+    this.AGT_LEADER_CODE = '-';
+    this.AGT_STATUS = 0;
+    this.AGT_TERMINATE_STATUS = 0;
+    this.AGT_STOP_COMM_STATUS = 0;
+    this.AGT_ISS_STATUS = 0;
+    this.AGT_ISS_AMOUNT = 0;
+    this.AGT_ISS_GIVEN_DATE = null;
+    this.AGT_ISS_CLOSE_DATE = null;
+    this.AGT_RETAINER_STATUS = 0;
+    this.AGT_RETAINER_AMOUNT = 0;
+    this.AGT_RETAINER_GIVEN_DATE = null;
+    this.AGT_RETAINER_CLOSE_DATE = null;
+    this.AGT_LEADER_AGENT_CODE_H = '-';
+    this.AGT_LEADER_AGENT_CODE_V = '-';
+    this.AGT_LEADER_LEADER_CODE_H = '-';
+    this.AGT_LEADER_LEADER_CODE_V = '-';
+
+    console.log('Cancel Rec End');
 
     // alert('End');
 
   }
 
   DateTimeCheck() {
-
   }
 
   SearchRecord() {
@@ -1163,8 +1372,6 @@ export class AgentComponent implements OnInit {
 
   }
 
-
-
   setClickedRow = function (index, AGENT_ID) {
     console.log(AGENT_ID);
 
@@ -1195,6 +1402,7 @@ export class AgentComponent implements OnInit {
           this.AGT_LINE_OF_BUSINESS = obj.AGT_LINE_OF_BUSINESS,
           this.AGT_CHANNEL = obj.AGT_CHANNEL,
           this.AGT_LEVEL = obj.AGT_LEVEL,
+          this.AGT_LANGUAGE = obj.AGT_LANGUAGE
           this.AGT_SUPER_CODE = obj.AGT_SUPER_CODE,
           this.AGT_TITLE = obj.AGT_TITLE,
           this.AGT_FIRST_NAME = obj.AGT_FIRST_NAME,
@@ -1203,7 +1411,7 @@ export class AgentComponent implements OnInit {
           this.AGT_ADD2 = obj.AGT_ADD2,
           this.AGT_ADD3 = obj.AGT_ADD3,
           this.AGT_NIC_NO = obj.AGT_NIC_NO,
-          this.AGT_DOB = moment(obj.AGT_DOB.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_DOB = this.SetDateFormatNew(obj.AGT_DOB.toString());//moment(obj.AGT_DOB.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
         this.AGT_MOBILE = obj.AGT_MOBILE,
           this.AGT_TEL_NO = obj.AGT_TEL_NO,
           this.AGT_FAX_NO = obj.AGT_FAX_NO,
@@ -1216,27 +1424,31 @@ export class AgentComponent implements OnInit {
 
           this.AGT_BANK_ACC_NO = obj.AGT_BANK_ACC_NO,
           this.AGT_ID_ISSUED = obj.AGT_ID_ISSUED,
-          this.AGT_ID_ISSUED_DATE = moment(obj.AGT_ID_ISSUED_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
-        this.AGT_APPOINT_DATE = moment(obj.AGT_APPOINT_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_ID_ISSUED_DATE = this.SetDateFormatNew(obj.AGT_ID_ISSUED_DATE.toString());
+        this.AGT_APPOINT_DATE = this.SetDateFormatNew(obj.AGT_APPOINT_DATE.toString());
         this.AGT_SLII_EXAM = obj.AGT_SLII_EXAM,
-          this.AGT_SLII_EXAM_DATE = moment(obj.AGT_SLII_EXAM_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
-        this.AGT_AGMT_RECEIVED = obj.AGT_AGMT_RECEIVED,
-          this.AGT_AGMT_DATE = moment(obj.AGT_AGMT_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
-        this.AGT_APP_RECEIVED = obj.AGT_APP_RECEIVED,
-          this.AGT_APP_RECEIVED_DATE = moment(obj.AGT_APP_RECEIVED_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_SLII_EXAM_DATE = this.SetDateFormatNew(obj.AGT_SLII_EXAM_DATE.toString());
+
+
+        this.AGT_AGMT_DATE_RECEIVED = this.SetDateFormatNew(obj.AGT_AGMT_DATE_RECEIVED.toString());
+        this.AGT_AGMT_DATE_ISSUED = this.SetDateFormatNew(obj.AGT_AGMT_DATE_ISSUED.toString());
+        this.AGT_APP_DATE_RECEIVED = this.SetDateFormatNew(obj.AGT_APP_DATE_RECEIVED.toString());
+        this.AGT_APP_DATE_ISSUED = this.SetDateFormatNew(obj.AGT_APP_DATE_ISSUED.toString());
+
+
         this.AGT_TRNS_BRANCH_CODE = obj.AGT_TRNS_BRANCH_CODE,
-          this.AGT_TRNS_BRANCH_DATE = moment(obj.AGT_APP_RECEIVED_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();//obj.,
-        this.AGT_STOP_COMM_DATE = moment(obj.AGT_STOP_COMM_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_TRNS_BRANCH_DATE = this.SetDateFormatNew(obj.AGT_TRNS_BRANCH_DATE.toString());
+        this.AGT_STOP_COMM_DATE = this.SetDateFormatNew(obj.AGT_STOP_COMM_DATE.toString());
         this.AGT_STOP_COMM_REASON = obj.AGT_STOP_COMM_REASON,
-          this.AGT_RELEASE_COMM_DATE = moment(obj.AGT_TRNS_BRANCH_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_RELEASE_COMM_DATE = this.SetDateFormatNew(obj.AGT_RELEASE_COMM_DATE.toString());
         this.AGT_RELEASE_COMM_REASON = obj.AGT_RELEASE_COMM_REASON,
           this.AGT_CUSTOMER_COMPLAIN = obj.AGT_CUSTOMER_COMPLAIN,
-          this.AGT_TERMINATE_NOTICE_DATE = moment(obj.AGT_TERMINATE_NOTICE_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
-        this.AGT_TERMINATE_DATE = moment(obj.AGT_TERMINATE_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_TERMINATE_NOTICE_DATE = this.SetDateFormatNew(obj.AGT_TERMINATE_NOTICE_DATE.toString());
+        this.AGT_TERMINATE_DATE = this.SetDateFormatNew(obj.AGT_TERMINATE_DATE.toString());
         this.AGT_TERMINATE_REASON = obj.AGT_TERMINATE_REASON,
-          this.AGT_BLACK_LISTED_DATE = moment(obj.AGT_BLACK_LISTED_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_BLACK_LISTED_DATE = this.SetDateFormatNew(obj.AGT_BLACK_LISTED_DATE.toString());
         this.AGT_DUES_TO_COMPANY = obj.AGT_DUES_TO_COMPANY,
-          this.AGT_REJOINED_DATE = moment(obj.AGT_REJOINED_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_REJOINED_DATE = this.SetDateFormatNew(obj.AGT_REJOINED_DATE.toString());
         this.AGT_REMARKS = obj.AGT_REMARKS,
           this.AGT_BUSINESS_TYPE = obj.AGT_BUSINESS_TYPE,
           this.AGT_LEVEL_CODE = obj.AGT_LEVEL_CODE,
@@ -1246,19 +1458,26 @@ export class AgentComponent implements OnInit {
           this.AGT_STOP_COMM_STATUS = obj.AGT_STOP_COMM_STATUS,
           this.AGT_ISS_STATUS = obj.AGT_ISS_STATUS,
           this.AGT_ISS_AMOUNT = obj.AGT_ISS_AMOUNT,
-          this.AGT_ISS_GIVEN_DATE = moment(obj.AGT_ISS_GIVEN_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
-        this.AGT_ISS_CLOSE_DATE = moment(obj.AGT_ISS_CLOSE_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_ISS_GIVEN_DATE = this.SetDateFormatNew(obj.AGT_ISS_GIVEN_DATE.toString());
+        this.AGT_ISS_CLOSE_DATE = this.SetDateFormatNew(obj.AGT_ISS_CLOSE_DATE.toString());
         this.AGT_RETAINER_STATUS = obj.AGT_RETAINER_STATUS,
           this.AGT_RETAINER_AMOUNT = obj.AGT_RETAINER_AMOUNT,
-          this.AGT_RETAINER_GIVEN_DATE = moment(obj.AGT_RETAINER_GIVEN_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
-        this.AGT_RETAINER_CLOSE_DATE = moment(obj.AGT_RETAINER_CLOSE_DATE.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
+          this.AGT_RETAINER_GIVEN_DATE = this.SetDateFormatNew(obj.AGT_RETAINER_GIVEN_DATE.toString());
+        this.AGT_RETAINER_CLOSE_DATE = this.SetDateFormatNew(obj.AGT_RETAINER_CLOSE_DATE.toString());
         this.AGT_LEADER_AGENT_CODE_V = obj.AGT_LEADER_AGENT_CODE_V,
           this.AGT_LEADER_LEADER_CODE_V = obj.AGT_LEADER_LEADER_CODE_V,
           this.AGT_LEADER_AGENT_CODE_H = obj.AGT_LEADER_AGENT_CODE_H,
           this.AGT_LEADER_LEADER_CODE_H = obj.AGT_LEADER_LEADER_CODE_H,
 
 
-          console.log(obj);
+
+          this.getProfilePicByAgentID(this.AGT_CODE);
+
+        this.getUploadDocByAgentID(this.AGT_CODE);
+
+
+
+        console.log(obj);
 
       },
       (err) => {
@@ -1269,11 +1488,34 @@ export class AgentComponent implements OnInit {
       });
 
 
-    this.router.navigate(['/', 'mainDashboard']);
+    // this.router.navigate(['/', 'mainDashboard']);
 
 
   }
 
+  setDocClickedRow = function (index, DOC_ID) {
+    console.log(DOC_ID);
+  }
 
+  CancelRecord() {
+    console.log('Cancel Rec');
+    this.clearValues();
+  }
+
+  NewRecord() {
+    console.log('New Rec');
+    this.clearValues();
+  }
+
+  onSelectOfISSStatus(SelectedISSID) {
+
+    if (SelectedISSID == 1) {
+      this.AGT_STOP_COMM_STATUS = 2;
+    }
+    else {
+      this.AGT_STOP_COMM_STATUS = 1;
+    }
+
+  }
 
 }

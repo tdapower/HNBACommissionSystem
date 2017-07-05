@@ -5,7 +5,7 @@ import { AgentComponent } from './agent/agent.component';
 import { BankComponent } from './bank/bank.component';
 
 import { ImageUploadComponent } from './image-upload/image-upload.component';
-// import { MainDashboardComponent } from './dashboards/main-dashboard/main-dashboard.component';
+import { MainDashboardComponent } from './main-dashboard/main-dashboard/main-dashboard.component';
 
 export const PAGE_ROUTES: Routes = [
     {
@@ -23,11 +23,11 @@ export const PAGE_ROUTES: Routes = [
     {
         path: 'imageUpload',
         component: ImageUploadComponent
+    
+    },
+    {
+        path: 'mainDashboard',
+        component: MainDashboardComponent
     }
-    // },
-    // {
-    //     path: 'mainDashboard',
-    //     component: MainDashboardComponent
-    // }
 
 ];

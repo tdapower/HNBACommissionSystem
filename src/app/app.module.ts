@@ -21,6 +21,8 @@ import { BankBranchService } from './shared/services/bankBranch/bankBranch.servi
 import { BranchService } from './shared/services/branch/branch.service';
 import { LevelService } from './shared/services/Level/level.service';
 import { UploadDocTypeService } from './shared/services/UploadDocType/upload-doc-type.service';
+import { UploadDocService } from './shared/services/UploadDoc/upload-doc.service';
+import { LanguageService } from './shared/services/Language/language.service';
 
 
 import { AgentComponent } from './pages/agent/agent.component';
@@ -36,7 +38,6 @@ import { SpinnerTopComponent } from './layout/spinner-top/spinner-top.component'
 import { MainDashboardComponent } from './pages/main-dashboard/main-dashboard/main-dashboard.component';
 import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome';
 import { ImageUploadComponent } from './pages/image-upload/image-upload.component';
-// import { MainDashboardComponent } from './pages/main-dashboard/main-dashboard/main-dashboard.component';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,9 @@ import { ImageUploadComponent } from './pages/image-upload/image-upload.componen
     BranchService,
     LevelService,
     UploadDocTypeService,
-    MainDashboardComponent
+    MainDashboardComponent,
+    UploadDocService,
+    LanguageService
     ],
 
 

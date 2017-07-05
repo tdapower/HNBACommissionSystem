@@ -10,6 +10,7 @@ export interface IAgent {
     AGT_LINE_OF_BUSINESS  : number;
     AGT_CHANNEL : string;
     AGT_LEVEL : number;
+    AGT_LANGUAGE : number;
     AGT_SUPER_CODE : string;
     AGT_TITLE : string;
     AGT_FIRST_NAME : string;
@@ -31,10 +32,12 @@ export interface IAgent {
     AGT_APPOINT_DATE : Date;
     AGT_SLII_EXAM : number;
     AGT_SLII_EXAM_DATE : Date;
-    AGT_AGMT_RECEIVED : number;
-    AGT_AGMT_DATE : Date;
-    AGT_APP_RECEIVED : number;
-    AGT_APP_RECEIVED_DATE : Date;
+
+    AGT_AGMT_DATE_RECEIVED : Date;
+    AGT_AGMT_DATE_ISSUED : Date;
+    AGT_APP_DATE_RECEIVED : Date;
+    AGT_APP_DATE_ISSUED : Date;
+    
     AGT_TRNS_BRANCH_CODE : string;
     AGT_TRNS_BRANCH_DATE : Date;
     AGT_STOP_COMM_DATE : Date;

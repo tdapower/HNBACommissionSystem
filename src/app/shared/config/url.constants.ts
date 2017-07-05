@@ -6,12 +6,12 @@ export const URL_CONST = {
 
 
 //UAT
- URL_PREFIX: 'http://localhost:55272/',
+  //URL_PREFIX: 'http://localhost:55272/',
 
 
 
 //PRODUCTION
- // URL_PREFIX: 'http://192.168.10.172:8085/',
+  URL_PREFIX: 'http://192.168.10.172:8085/',
 
 
 

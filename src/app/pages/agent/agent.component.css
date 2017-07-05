@@ -5,13 +5,14 @@
     width: 150px;
 }
 .AgentImage{
-    background-image: url("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQQnGpi8c34iR5ZR02q00o_3joYL0KwJQ-nmUsYAKFYos6q9422")!important;
+    /*background-image: url(http://192.168.10.172:8082/comm_docs/2017/123/IMG_6510.JPGUUU);*/
+    /*background-image: url("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQQnGpi8c34iR5ZR02q00o_3joYL0KwJQ-nmUsYAKFYos6q9422")!important;*/
     background-size: cover;
     width:250px;
     height: 250px;
     margin-left: 28 px;
     border-color: red;
-    border: 1px;
+    border: 5px;
     background-repeat: no-repeat;
 }
 
@@ -29,7 +30,7 @@
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
     cursor: pointer;
-    width: 100px;
+    width: 150px;
     height: 30px;
 }
 
@@ -48,6 +49,23 @@
 
 .wellnew{
 background-color:rgba(darkblue)!important;
+}
+
+
+.Column-1{
+    width: 63.667%;
+}
+.Column-2{
+    width: 63.667%;
+}
+.Column-3{
+    width: 63.667%;
+}
+.Column-4{
+    width: 63.667%;
+}
+.Column-5{
+    width: 63.667%;
 }
 
 
