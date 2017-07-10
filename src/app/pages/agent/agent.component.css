@@ -8,12 +8,17 @@
     /*background-image: url(http://192.168.10.172:8082/comm_docs/2017/123/IMG_6510.JPGUUU);*/
     /*background-image: url("https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQQnGpi8c34iR5ZR02q00o_3joYL0KwJQ-nmUsYAKFYos6q9422")!important;*/
     background-size: cover;
-    width:250px;
-    height: 250px;
+    width:200px;
+    height: 200px;
     margin-left: 28 px;
     border-color: red;
-    border: 5px;
+    border: 1px;
     background-repeat: no-repeat;
+}
+
+
+.HistoryImage{
+    background-image: url(http://192.168.10.172:8082/comm_docs/2017/123/IMG_6510.JPGUUU);
 }
 
 

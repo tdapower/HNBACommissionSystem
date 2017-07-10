@@ -1,4 +1,4 @@
-import { Component, OnInit, NgZone, Inject, EventEmitter } from '@angular/core';
+import { Component, OnInit, NgZone, Inject, EventEmitter, ChangeDetectorRef } from '@angular/core';
 
 import { Router } from '@angular/router';
 import { BranchService } from '../../shared/services/branch/branch.service';
@@ -33,6 +33,15 @@ import { ILevel } from '../../shared/models/Level.models';
 import { LanguageService } from '../../shared/services/Language/language.service';
 import { ILanguage } from '../../shared/models/Language.model';
 
+import { DesignationService } from '../../shared/services/Designation/designation.service';
+import { Idesignation } from '../../shared/models/Designation.models';
+
+import { ChangereasonService } from '../../shared/services/ChangeReason/changereason.service';
+import { IChangeReason } from '../../shared/models/ChangeReason.models';
+
+import { AgentHistoryService } from '../../shared/services/AgentHistory/agent-history.service';
+import { IagentHistory } from '../../shared/models/AgentHistory.models';
+
 
 import { DatePipe } from '@angular/common';
 import { MomentModule } from 'angular2-moment';
@@ -60,6 +69,9 @@ export class AgentComponent implements OnInit {
   Id: number = 0;
   Code: string = '';
   Description: string = '';
+  isDisabled: boolean = false;
+  xxx: boolean = true;
+  isNewRecord: boolean = false;
 
   branchList: Array<Object> = [];
   bankList: Array<Object> = [];
@@ -71,6 +83,11 @@ export class AgentComponent implements OnInit {
   UploadDocTypeList: Array<IUploadDocType> = [];
   UploadDocList: Array<IUploadDocType> = [];
   LanguageList: Array<ILanguage> = [];
+  DesignationList: Array<ILanguage> = [];
+  ChangeReasonList: Array<ILanguage> = [];
+  BranchTransferList: Array<ILanguage> = [];
+  StopCommissionList: Array<ILanguage> = [];
+  ReleaseCommissionList: Array<ILanguage> = [];
 
 
 
@@ -149,8 +166,100 @@ export class AgentComponent implements OnInit {
   AGT_LEADER_AGENT_CODE_H: string;
   AGT_LEADER_LEADER_CODE_H: string;
   AGT_CREATED_BY: string;
-
+  AGT_DESIGNATION_ID: number;
+  AGT_HIERARCHY_TYPE_ID: number;
+  AGT_CHANGE_REASON_ID: number;
+  AGT_EFFECTIVE_DATE: Date;
+  AGT_CHANGE_REASON: string;
   AGT_IMAGE: string;
+
+
+
+
+  //--------------------Control Enabled Disabled variables----------------------
+  isAGT_IDDisabled: boolean = false;
+  isAGT_CODEDisabled: boolean = false;
+  isAGT_TYPE_IDDisabled: boolean = false;
+  isAGT_CODE_IDDisabled: boolean = false;
+  isAGT_MDRT_STATUSDisabled: boolean = false;
+  isAGT_MDRT_YEARDisabled: boolean = false;
+  isAGT_SYSTEM_IDDisabled: boolean = false;
+  isAGT_SUB_CODEDisabled: boolean = false;
+  isAGT_LINE_OF_BUSINESSDisabled: boolean = false;
+  isAGT_CHANNELDisabled: boolean = false;
+  isAGT_LEVELDisabled: boolean = false;
+  isAGT_LANGUAGEDisabled: boolean = false;
+  isAGT_SUPER_CODEDisabled: boolean = false;
+  isAGT_TITLEDisabled: boolean = false;
+  isAGT_FIRST_NAMEDisabled: boolean = false;
+  isAGT_LAST_NAMEDisabled: boolean = false;
+  isAGT_ADD1Disabled: boolean = false;
+  isAGT_ADD2Disabled: boolean = false;
+  isAGT_ADD3Disabled: boolean = false;
+  isAGT_NIC_NODisabled: boolean = false;
+  isAGT_DOBDisabled: boolean = false;
+  isAGT_MOBILEDisabled: boolean = false;
+  isAGT_TEL_NODisabled: boolean = false;
+  isAGT_FAX_NODisabled: boolean = false;
+  isAGT_BRANCH_CODEDisabled: boolean = false;
+  isAGT_BANK_IDDisabled: boolean = false;
+  isAGT_BANK_BRANCH_IDDisabled: boolean = false;
+  isAGT_BANK_ACC_NODisabled: boolean = false;
+  isAGT_ID_ISSUEDDisabled: boolean = false;
+  isAGT_ID_ISSUED_DATEDisabled: boolean = false;
+  isAGT_APPOINT_DATEDisabled: boolean = false;
+  isAGT_SLII_EXAMDisabled: boolean = false;
+  isAGT_SLII_EXAM_DATEDisabled: boolean = false;
+  isAGT_AGMT_DATE_RECEIVEDDisabled: boolean = false;
+  isAGT_AGMT_DATE_ISSUEDDisabled: boolean = false;
+  isAGT_APP_DATE_RECEIVEDDisabled: boolean = false;
+  isAGT_APP_DATE_ISSUEDDisabled: boolean = false;
+  isAGT_TRNS_BRANCH_CODEDisabled: boolean = false;
+  isAGT_TRNS_BRANCH_DATEDisabled: boolean = false;
+  isAGT_STOP_COMM_DATEDisabled: boolean = false;
+  isAGT_STOP_COMM_REASONDisabled: boolean = false;
+  isAGT_RELEASE_COMM_DATEDisabled: boolean = false;
+  isAGT_RELEASE_COMM_REASONDisabled: boolean = false;
+  isAGT_CUSTOMER_COMPLAINDisabled: boolean = false;
+  isAGT_TERMINATE_NOTICE_DATEDisabled: boolean = false;
+  isAGT_TERMINATE_DATEDisabled: boolean = false;
+  isAGT_TERMINATE_REASONDisabled: boolean = false;
+  isAGT_BLACK_LISTED_DATEDisabled: boolean = false;
+  isAGT_DUES_TO_COMPANYDisabled: boolean = false;
+  isAGT_REJOINED_DATEDisabled: boolean = false;
+  isAGT_REMARKSDisabled: boolean = false;
+  isAGT_BUSINESS_TYPEDisabled: boolean = false;
+  isAGT_LEVEL_CODEDisabled: boolean = false;
+  isAGT_LEADER_CODEDisabled: boolean = false;
+  isAGT_STATUSDisabled: boolean = false;
+  isAGT_TERMINATE_STATUSDisabled: boolean = false;
+  isAGT_STOP_COMM_STATUSDisabled: boolean = false;
+  isAGT_ISS_STATUSDisabled: boolean = false;
+  isAGT_ISS_AMOUNTDisabled: boolean = false;
+  isAGT_ISS_GIVEN_DATEDisabled: boolean = false;
+  isAGT_ISS_CLOSE_DATEDisabled: boolean = false;
+  isAGT_RETAINER_STATUSDisabled: boolean = false;
+  isAGT_RETAINER_AMOUNTDisabled: boolean = false;
+  isAGT_RETAINER_GIVEN_DATEDisabled: boolean = false;
+  isAGT_RETAINER_CLOSE_DATEDisabled: boolean = false;
+  isAGT_LEADER_AGENT_CODE_VDisabled: boolean = false;
+  isAGT_LEADER_LEADER_CODE_VDisabled: boolean = false;
+  isAGT_LEADER_AGENT_CODE_HDisabled: boolean = false;
+  isAGT_LEADER_LEADER_CODE_HDisabled: boolean = false;
+  isAGT_CREATED_BYDisabled: boolean = false;
+  isAGT_DESIGNATION_IDDisabled: boolean = false;
+  isAGT_HIERARCHY_TYPE_IDDisabled: boolean = false;
+  isAGT_CHANGE_REASON_IDDisabled: boolean = false;
+  isAGT_EFFECTIVE_DATEDisabled: boolean = false;
+  isAGT_CHANGE_REASONDisabled: boolean = false;
+
+
+  isNEWDisabled: boolean = false;
+  isEDITDisabled: boolean = false;
+  isSAVEDisabled: boolean = false;
+  isCANCELDisabled: boolean = false;
+
+  //----------------------------------------------------------------------------
 
 
   rtnDate: Date;
@@ -239,6 +348,14 @@ export class AgentComponent implements OnInit {
   AGT_SEARCH_MOBILE: string;
   //-------------------------------------------------
 
+  //Agent History Search-----------------------------
+  AGT_HISTORY_Column1: string;
+  AGT_HISTORY_Column2: string;
+  AGT_HISTORY_Column3: string;
+  AGT_HISTORY_Column4: string;
+  AGT_HISTORY_Column5: string;
+  //-------------------------------------------------
+
   //Agent Upload Docs--------------------------------
   AGT_PROFILE_ID: number = 0;
   AGT_PROFILE_AGT_CODE: string = "";
@@ -249,9 +366,13 @@ export class AgentComponent implements OnInit {
   AGT_PROFILE_CREATDEDATE: string = "";
   AGT_PROFILE_EFFECTIVEENDDATE: string = "";
 
-  UPLOAD_DOC_DESC: string = "";
+  AGT_UPLOAD_DOC_DESC: string = "";
   //-------------------------------------------------
 
+  TempStr1: string = "";
+  TempStr2: string = "";
+  TempInt1: number = 0;
+  TempInt2: number = 0;
 
   UploadDocTypeId: number;
   uploadDocTypeList: Array<IUploadDocType> = [];
@@ -272,10 +393,12 @@ export class AgentComponent implements OnInit {
   constructor(private BranchService: BranchService, private BankService: BankService,
     private BankBranchService: BankBranchService, private AgentTypeService: AgentTypeService,
     private AgentCodeService: AgentCodeService, private AgentService: AgentService,
-    private LevelService: LevelService, private UploadDocTypeService: UploadDocTypeService, 
-    private UploadDocService: UploadDocService, private LanguageService:LanguageService,
-    moment: MomentModule, private router: Router,
-    @Inject(NgZone) private zone: NgZone) {
+    private LevelService: LevelService, private UploadDocTypeService: UploadDocTypeService,
+    private UploadDocService: UploadDocService, private LanguageService: LanguageService,
+    moment: MomentModule, private router: Router, private DesignationService: DesignationService,
+    private ChangereasonService: ChangereasonService, private AgentHistoryService: AgentHistoryService,
+    @Inject(NgZone) private zone: NgZone,
+    private ref: ChangeDetectorRef) {
 
 
 
@@ -290,12 +413,21 @@ export class AgentComponent implements OnInit {
       this.getAgentTypes();
       this.getLevels();
       this.getLanguage();
+      this.getDesignation();
+      this.getChangeReason();
 
-      this.clearValues();
+      this.FormControlStatusChange('LOAD');
+
+      this.FormButtonStatusChange('LOAD');
+
+
 
       this.getUploadDocTypes();
 
       this.User = JSON.parse(localStorage.getItem('currentMRPUser'));
+
+      this.isDisabled = true;
+
 
     } catch (error) {
       alert('Error Ocurred...!');
@@ -303,11 +435,87 @@ export class AgentComponent implements OnInit {
 
   }
 
+
+  GetBranchTransferHistory(typeID) {
+    //1 = Transfer Branch History
+    //2 = Stop Commission History
+    //3 = Release Commission History
+    this.AgentHistoryService.getagentHistoryByAgentCode(this.AGT_CODE, typeID)
+      .subscribe((data) => {
+        console.log(data);
+
+        this.BranchTransferList = data;
+
+        console.log('GetTransBranchHistory');
+        console.log(data);
+
+      },
+      (err) => console.log(err));
+  }
+
+  GetStopCommissionHistory(typeID) {
+    //1 = Transfer Branch History
+    //2 = Stop Commission History
+    //3 = Release Commission History
+    this.AgentHistoryService.getagentHistoryByAgentCode(this.AGT_CODE, typeID)
+      .subscribe((data) => {
+        console.log(data);
+
+        this.StopCommissionList = data;
+
+        console.log('GetTransBranchHistory');
+        console.log(data);
+
+      },
+      (err) => console.log(err));
+  }
+
+
+  GetReleaseCommissionHistory(typeID) {
+    //1 = Transfer Branch History
+    //2 = Stop Commission History
+    //3 = Release Commission History
+    this.AgentHistoryService.getagentHistoryByAgentCode(this.AGT_CODE, typeID)
+      .subscribe((data) => {
+        console.log(data);
+
+        this.ReleaseCommissionList = data;
+
+        console.log('GetTransBranchHistory');
+        console.log(data);
+
+      },
+      (err) => console.log(err));
+  }
+
+
+  getDesignation() {
+    this.DesignationService.getdesignations()
+      .subscribe((data) => {
+
+        this.DesignationList = data;
+        console.log(JSON.stringify(data));
+      },
+      (err) => console.log(err));
+  }
+
+
+  getChangeReason() {
+    this.ChangereasonService.getchangereasons()
+      .subscribe((data) => {
+
+        this.ChangeReasonList = data;
+        console.log(JSON.stringify(data));
+      },
+      (err) => console.log(err));
+  }
+
+
   getLanguage() {
     this.LanguageService.getLanguage()
       .subscribe((data) => {
 
-        this.LanguageList= data;
+        this.LanguageList = data;
         console.log(JSON.stringify(data));
       },
       (err) => console.log(err));
@@ -315,7 +523,7 @@ export class AgentComponent implements OnInit {
 
   startUpload() {
 
-    
+
     if (this.AGT_CODE == '' || this.AGT_CODE == null) {
       alert('Please Search and Select a ..!');
 
@@ -406,7 +614,7 @@ export class AgentComponent implements OnInit {
 
 
 
-    if (this.UPLOAD_DOC_DESC == '') {
+    if (this.AGT_UPLOAD_DOC_DESC == '') {
       alert('Please enter document description..!');
 
     }
@@ -434,7 +642,7 @@ export class AgentComponent implements OnInit {
       allowedExtensions: ['jpg', 'pdf', 'txt'],
       // data: { tempSeqId: '123', docTypeId: this.UploadDocTypeId },
       //data: { AgentID: this.AGT_ID, DocTypeID: this.UploadDocTypeId, UserID:this.User.UserName},
-      data: { AgentCode: this.AGT_CODE, DocTypeID: this.UploadDocTypeId, UserID: this.User.UserName, DocDescription: this.UPLOAD_DOC_DESC },
+      data: { AgentCode: this.AGT_CODE, DocTypeID: this.UploadDocTypeId, UserID: this.User.UserName, DocDescription: this.AGT_UPLOAD_DOC_DESC },
       autoUpload: false,
       fieldName: 'file',
       fieldReset: true,
@@ -519,7 +727,7 @@ export class AgentComponent implements OnInit {
 
     console.log(vDate);
 
-    if ((vDate == '01/01/2000 00:00:00') || (moment(vDate.toString().substr(0, 10), 'DD/MM/YYYY').toDate() == moment('01/01/1900 00:00:00'.toString().substr(0, 10), 'DD/MM/YYYY').toDate()) || (vDate=='01/01/1900 12:00:00 AM')) {//alert(vDate);
+    if ((vDate == '01/01/2000 00:00:00') || (moment(vDate.toString().substr(0, 10), 'DD/MM/YYYY').toDate() == moment('01/01/1900 00:00:00'.toString().substr(0, 10), 'DD/MM/YYYY').toDate()) || (vDate == '01/01/1900 12:00:00 AM')) {//alert(vDate);
       this.rtnDate = null;//moment('01/01/1900'.toString()).format('DD/MM/YYYY');
     } else {
       this.rtnDate = moment(vDate.toString().substr(0, 10), 'DD/MM/YYYY').toDate();// moment(vDate).format('DD/MM/YYYY');
@@ -561,6 +769,7 @@ export class AgentComponent implements OnInit {
       var FormattedAGT_RETAINER_GIVEN_DATE = this.SetDateFormat(this.AGT_RETAINER_GIVEN_DATE);
       var FormattedAGT_RETAINER_CLOSE_DATE = this.SetDateFormat(this.AGT_RETAINER_CLOSE_DATE);
       var FormattedAGT_TRNS_BRANCH_DATE = this.SetDateFormat(this.AGT_TRNS_BRANCH_DATE);
+      var FormattedAGT_EFFECTIVE_DATE = this.SetDateFormat(this.AGT_EFFECTIVE_DATE);
 
       // alert(this.AGT_LEVEL);
 
@@ -598,7 +807,7 @@ export class AgentComponent implements OnInit {
         AGT_SLII_EXAM: this.AGT_SLII_EXAM,
         AGT_SLII_EXAM_DATE: FormattedAGT_SLII_EXAM_DATE,
 
-        AGT_AGMT_DATE_RECEIVED:  FormattedAGT_AGMT_DATE_RECEIVED,
+        AGT_AGMT_DATE_RECEIVED: FormattedAGT_AGMT_DATE_RECEIVED,
         AGT_AGMT_DATE_ISSUED: FormattedAGT_AGMT_DATE_ISSUED,
         AGT_APP_DATE_RECEIVED: FormattedAGT_APP_DATE_RECEIVED,
         AGT_APP_DATE_ISSUED: FormattedAGT_APP_DATE_ISSUED,
@@ -637,7 +846,12 @@ export class AgentComponent implements OnInit {
         AGT_LEADER_LEADER_CODE_V: this.AGT_LEADER_LEADER_CODE_V,
         AGT_LEADER_AGENT_CODE_H: this.AGT_LEADER_AGENT_CODE_H,
         AGT_LEADER_LEADER_CODE_H: this.AGT_LEADER_LEADER_CODE_H,
-        AGT_CREATED_BY: this.User.UserName//this.AGT_CREATED_BY
+        AGT_CREATED_BY: this.User.UserName,
+        AGT_DESIGNATION_ID: this.AGT_DESIGNATION_ID,
+        AGT_HIERARCHY_TYPE_ID: this.AGT_HIERARCHY_TYPE_ID,
+        AGT_CHANGE_REASON_ID: this.AGT_CHANGE_REASON_ID,
+        AGT_EFFECTIVE_DATE: FormattedAGT_EFFECTIVE_DATE,//null,//this.AGT_EFFECTIVE_DATE,
+        AGT_CHANGE_REASON: this.AGT_CHANGE_REASON
 
       }
 
@@ -649,13 +863,32 @@ export class AgentComponent implements OnInit {
 
         //this.getBanks();
 
+
+        //this.router.navigate(['/', 'agent']);   substring(1, 4);
+
+        this.TempStr1 = data.substring(0 + 1, data.indexOf("|"));
+        this.TempStr2 = data.substring(data.indexOf("|") + 1, data.indexOf("||"));
+
+        this.AGT_CODE = this.TempStr1;
+        this.AGT_LEVEL_CODE = this.TempStr2;
+
+        data = data.replace('|', '').replace('||', '').replace(this.TempStr1, '').replace(this.TempStr2, '');
+
+        console.log(data);
+
         if (data.toString().replace(/"/g, '') != "Successfully Saved") {
           alert(data);
+          //this.FormControlStatusChange('LOAD'); //disabled controls after save
+          this.FormButtonStatusChange('SAVE');
           return;
         } else {
           alert(data);
+          this.FormControlStatusChange('LOAD'); //disabled controls after save
+          this.FormButtonStatusChange('SAVE');
           return;
         }
+
+
       },
         (err) => {
           console.log(err);
@@ -720,19 +953,24 @@ export class AgentComponent implements OnInit {
 
     this.isAgentDetailsValid = true;
 
-    if (this.AGT_TYPE_ID == 0) {//column name
-      this.AGT_TYPE_ID_CLS = "has-error";
-      this.isAgentDetailsValid = false;
-    } else {
-      this.AGT_TYPE_ID_CLS = "form-group"; //AgentTypeClass
+    console.log(this.isNEWDisabled);
+
+    if (this.isNewRecord == true) {
+      if (this.AGT_TYPE_ID == 0) {//column name 
+        this.AGT_TYPE_ID_CLS = "has-error";
+        this.isAgentDetailsValid = false;
+      } else {
+        this.AGT_TYPE_ID_CLS = "form-group"; //AgentTypeClass
+      }
+
+      if (this.AGT_CODE_ID == 0) {
+        this.AGT_CODE_ID_CLS = "has-error";
+        this.isAgentDetailsValid = false;
+      } else {
+        this.AGT_CODE_ID_CLS = "form-group"; //AgentTypeClass
+      }
     }
 
-    // if (this.AGT_CODE_ID == 0) {
-    //   this.AGT_CODE_ID_CLS = "has-error";console.log(this.AGT_CODE_ID);
-    //   this.isAgentDetailsValid = false;
-    // } else {
-    //   this.AGT_CODE_ID_CLS = "form-group"; //AgentTypeClass
-    // }
 
     if (this.AGT_BRANCH_CODE == '0') {
       this.AGT_BRANCH_CODE_CLS = "has-error";
@@ -1263,8 +1501,8 @@ export class AgentComponent implements OnInit {
     this.AGT_LINE_OF_BUSINESS = 0;
     this.AGT_CHANNEL = '-';
     this.AGT_LEVEL = 0,
-    this.AGT_LANGUAGE = 0,
-    this.AGT_SUPER_CODE = '-';
+      this.AGT_LANGUAGE = 0,
+      this.AGT_SUPER_CODE = '-';
     this.AGT_TITLE = "0";
     this.AGT_FIRST_NAME = '';
     this.AGT_LAST_NAME = '';
@@ -1322,6 +1560,12 @@ export class AgentComponent implements OnInit {
     this.AGT_LEADER_LEADER_CODE_H = '-';
     this.AGT_LEADER_LEADER_CODE_V = '-';
 
+    this.AGT_DESIGNATION_ID = 0;
+    this.AGT_HIERARCHY_TYPE_ID = 0;
+    this.AGT_CHANGE_REASON_ID = 0;
+    this.AGT_EFFECTIVE_DATE = null;
+    this.AGT_CHANGE_REASON = '-';
+
     console.log('Cancel Rec End');
 
     // alert('End');
@@ -1329,6 +1573,18 @@ export class AgentComponent implements OnInit {
   }
 
   DateTimeCheck() {
+  }
+
+  ClearSearch() {
+
+    this.AGT_SEARCH_ID = '';
+    this.AGT_SEARCH_CODE = '';
+    this.AGT_SEARCH_NAME = '';
+    this.AGT_SEARCH_ADDRESS = '';
+    this.AGT_SEARCH_NIC_NO = '';
+    this.AGT_SEARCH_MOBILE = '';
+
+    this.AgentSearchList = null;
   }
 
   SearchRecord() {
@@ -1403,7 +1659,7 @@ export class AgentComponent implements OnInit {
           this.AGT_CHANNEL = obj.AGT_CHANNEL,
           this.AGT_LEVEL = obj.AGT_LEVEL,
           this.AGT_LANGUAGE = obj.AGT_LANGUAGE
-          this.AGT_SUPER_CODE = obj.AGT_SUPER_CODE,
+        this.AGT_SUPER_CODE = obj.AGT_SUPER_CODE,
           this.AGT_TITLE = obj.AGT_TITLE,
           this.AGT_FIRST_NAME = obj.AGT_FIRST_NAME,
           this.AGT_LAST_NAME = obj.AGT_LAST_NAME,
@@ -1468,16 +1724,30 @@ export class AgentComponent implements OnInit {
           this.AGT_LEADER_LEADER_CODE_V = obj.AGT_LEADER_LEADER_CODE_V,
           this.AGT_LEADER_AGENT_CODE_H = obj.AGT_LEADER_AGENT_CODE_H,
           this.AGT_LEADER_LEADER_CODE_H = obj.AGT_LEADER_LEADER_CODE_H,
+          this.AGT_DESIGNATION_ID = obj.AGT_DESIGNATION_ID,
+          this.AGT_HIERARCHY_TYPE_ID = obj.AGT_HIERARCHY_TYPE_ID,
+          this.AGT_CHANGE_REASON_ID = obj.AGT_CHANGE_REASON_ID,
+          this.AGT_EFFECTIVE_DATE = obj.AGT_EFFECTIVE_DATE,
+          this.AGT_CHANGE_REASON = obj.AGT_CHANGE_REASON
 
 
 
-          this.getProfilePicByAgentID(this.AGT_CODE);
+        this.getProfilePicByAgentID(this.AGT_CODE);
 
         this.getUploadDocByAgentID(this.AGT_CODE);
 
+        this.FormControlStatusChange('LOAD');
 
+        this.FormButtonStatusChange('GET');
+
+        this.GetBranchTransferHistory(1);//Transfer Branch History
+
+        this.GetStopCommissionHistory(2);//Stop Commission History
+
+        this.GetReleaseCommissionHistory(3);//Release Commission History
 
         console.log(obj);
+
 
       },
       (err) => {
@@ -1499,12 +1769,25 @@ export class AgentComponent implements OnInit {
 
   CancelRecord() {
     console.log('Cancel Rec');
+    this.FormControlStatusChange('NEW');
     this.clearValues();
+
+    this.FormButtonStatusChange('CANCEL');
   }
 
   NewRecord() {
     console.log('New Rec');
+    this.FormControlStatusChange('NEW');
     this.clearValues();
+
+    this.FormButtonStatusChange('NEW');
+  }
+
+
+  EditRecord() {
+    console.log('Edit Rec');
+    this.FormControlStatusChange('EDIT');
+    this.FormButtonStatusChange('EDIT');
   }
 
   onSelectOfISSStatus(SelectedISSID) {
@@ -1518,4 +1801,311 @@ export class AgentComponent implements OnInit {
 
   }
 
+  FormButtonStatusChange(Status) {
+    if (Status == 'NEW') {
+      this.isNEWDisabled = true;
+      this.isEDITDisabled = true;
+      this.isSAVEDisabled = false;
+      this.isCANCELDisabled = false;
+
+      this.xxx = false;
+
+      this.isNewRecord = true;
+
+    }
+    if (Status == 'EDIT') {
+      this.isNEWDisabled = true;
+      this.isEDITDisabled = true;
+      this.isSAVEDisabled = false;
+      this.isCANCELDisabled = false;
+
+      this.xxx = false;
+
+      this.isNewRecord = false;
+    }
+    if (Status == 'SAVE') {
+      this.isNEWDisabled = false;
+      this.isEDITDisabled = true;
+      this.isSAVEDisabled = true;
+      this.isCANCELDisabled = true;
+
+      this.xxx = true;
+    }
+    if (Status == 'CANCEL') {
+      this.isNEWDisabled = false;
+      this.isEDITDisabled = true;
+      this.isSAVEDisabled = true;
+      this.isCANCELDisabled = true;
+
+      this.AGT_IMAGE = null;
+
+      this.xxx = false;
+
+      this.isNewRecord = true;
+
+
+      this.AGT_TYPE_ID_CLS = "form-group";
+      this.AGT_CODE_ID_CLS = "form-group";
+      this.AGT_BRANCH_CODE_CLS = "form-group";
+      this.AGT_TITLE_CLS = "form-group";
+      this.AGT_FIRST_NAME_CLS = "form-group";
+      this.AGT_LAST_NAME_CLS = "form-group";
+      this.AGT_ADD1_CLS = "form-group";
+      this.AGT_APPOINT_DATE_CLS = "form-group";
+    }
+    if (Status == 'LOAD') {
+      this.isNEWDisabled = false;
+      this.isEDITDisabled = true;
+      this.isSAVEDisabled = true;
+      this.isCANCELDisabled = true;
+
+      this.xxx = true;
+
+    }
+    if (Status == 'GET') {
+      this.isNEWDisabled = true;
+      this.isEDITDisabled = false;
+      this.isSAVEDisabled = true;
+      this.isCANCELDisabled = false;
+
+      this.xxx = true;
+    }
+  }
+
+  //---------------Form control enabled disabled function----------------
+  //Record Status (NEW/EDIT/LOAD)
+  FormControlStatusChange(Status) {
+    console.log(Status);
+    if (Status == 'NEW') {
+      this.isAGT_IDDisabled = false;
+      this.isAGT_CODEDisabled = false;
+      this.isAGT_TYPE_IDDisabled = false;
+      this.isAGT_CODE_IDDisabled = false;
+      this.isAGT_MDRT_STATUSDisabled = false;
+      this.isAGT_MDRT_YEARDisabled = false;
+      this.isAGT_SYSTEM_IDDisabled = false;
+      this.isAGT_SUB_CODEDisabled = false;
+      this.isAGT_LINE_OF_BUSINESSDisabled = false;
+      this.isAGT_CHANNELDisabled = false;
+      this.isAGT_LEVELDisabled = false;
+      this.isAGT_LANGUAGEDisabled = false;
+      this.isAGT_SUPER_CODEDisabled = false;
+      this.isAGT_TITLEDisabled = false;
+      this.isAGT_FIRST_NAMEDisabled = false;
+      this.isAGT_LAST_NAMEDisabled = false;
+      this.isAGT_ADD1Disabled = false;
+      this.isAGT_ADD2Disabled = false;
+      this.isAGT_ADD3Disabled = false;
+      this.isAGT_NIC_NODisabled = false;
+      this.isAGT_DOBDisabled = false;
+      this.isAGT_MOBILEDisabled = false;
+      this.isAGT_TEL_NODisabled = false;
+      this.isAGT_FAX_NODisabled = false;
+      this.isAGT_BRANCH_CODEDisabled = false;
+      this.isAGT_BANK_IDDisabled = false;
+      this.isAGT_BANK_BRANCH_IDDisabled = false;
+      this.isAGT_BANK_ACC_NODisabled = false;
+      this.isAGT_ID_ISSUEDDisabled = false;
+      this.isAGT_ID_ISSUED_DATEDisabled = false;
+      this.isAGT_APPOINT_DATEDisabled = false;
+      this.isAGT_SLII_EXAMDisabled = false;
+      this.isAGT_SLII_EXAM_DATEDisabled = false;
+      this.isAGT_AGMT_DATE_RECEIVEDDisabled = false;
+      this.isAGT_AGMT_DATE_ISSUEDDisabled = false;
+      this.isAGT_APP_DATE_RECEIVEDDisabled = false;
+      this.isAGT_APP_DATE_ISSUEDDisabled = false;
+      this.isAGT_TRNS_BRANCH_CODEDisabled = false;
+      this.isAGT_TRNS_BRANCH_DATEDisabled = false;
+      this.isAGT_STOP_COMM_DATEDisabled = false;
+      this.isAGT_STOP_COMM_REASONDisabled = false;
+      this.isAGT_RELEASE_COMM_DATEDisabled = false;
+      this.isAGT_RELEASE_COMM_REASONDisabled = false;
+      this.isAGT_CUSTOMER_COMPLAINDisabled = false;
+      this.isAGT_TERMINATE_NOTICE_DATEDisabled = false;
+      this.isAGT_TERMINATE_DATEDisabled = false;
+      this.isAGT_TERMINATE_REASONDisabled = false;
+      this.isAGT_BLACK_LISTED_DATEDisabled = false;
+      this.isAGT_DUES_TO_COMPANYDisabled = false;
+      this.isAGT_REJOINED_DATEDisabled = false;
+      this.isAGT_REMARKSDisabled = false;
+      this.isAGT_BUSINESS_TYPEDisabled = false;
+      this.isAGT_LEVEL_CODEDisabled = false;
+      this.isAGT_LEADER_CODEDisabled = false;
+      this.isAGT_STATUSDisabled = false;
+      this.isAGT_TERMINATE_STATUSDisabled = false;
+      this.isAGT_STOP_COMM_STATUSDisabled = false;
+      this.isAGT_ISS_STATUSDisabled = false;
+      this.isAGT_ISS_AMOUNTDisabled = false;
+      this.isAGT_ISS_GIVEN_DATEDisabled = false;
+      this.isAGT_ISS_CLOSE_DATEDisabled = false;
+      this.isAGT_RETAINER_STATUSDisabled = false;
+      this.isAGT_RETAINER_AMOUNTDisabled = false;
+      this.isAGT_RETAINER_GIVEN_DATEDisabled = false;
+      this.isAGT_RETAINER_CLOSE_DATEDisabled = false;
+      this.isAGT_LEADER_AGENT_CODE_VDisabled = false;
+      this.isAGT_LEADER_LEADER_CODE_VDisabled = false;
+      this.isAGT_LEADER_AGENT_CODE_HDisabled = false;
+      this.isAGT_LEADER_LEADER_CODE_HDisabled = false;
+      this.isAGT_CREATED_BYDisabled = false;
+      this.isAGT_DESIGNATION_IDDisabled = false;
+      this.isAGT_HIERARCHY_TYPE_IDDisabled = false;
+      this.isAGT_CHANGE_REASON_IDDisabled = false;
+      this.isAGT_EFFECTIVE_DATEDisabled = false;
+      this.isAGT_CHANGE_REASONDisabled = false;
+
+    }
+    if (Status == 'EDIT') {
+      this.isAGT_MDRT_STATUSDisabled = false;
+      this.isAGT_MDRT_YEARDisabled = false;
+      this.isAGT_SYSTEM_IDDisabled = false;
+      this.isAGT_SUB_CODEDisabled = false;
+      this.isAGT_LINE_OF_BUSINESSDisabled = false;
+      this.isAGT_CHANNELDisabled = false;
+      this.isAGT_LEVELDisabled = false;
+      this.isAGT_LANGUAGEDisabled = false;
+      this.isAGT_SUPER_CODEDisabled = false;
+      this.isAGT_TITLEDisabled = false;
+      this.isAGT_FIRST_NAMEDisabled = false;
+      this.isAGT_LAST_NAMEDisabled = false;
+      this.isAGT_ADD1Disabled = false;
+      this.isAGT_ADD2Disabled = false;
+      this.isAGT_ADD3Disabled = false;
+      this.isAGT_NIC_NODisabled = false;
+      this.isAGT_DOBDisabled = false;
+      this.isAGT_MOBILEDisabled = false;
+      this.isAGT_TEL_NODisabled = false;
+      this.isAGT_FAX_NODisabled = false;
+      this.isAGT_BRANCH_CODEDisabled = false;
+      this.isAGT_BANK_IDDisabled = false;
+      this.isAGT_BANK_BRANCH_IDDisabled = false;
+      this.isAGT_BANK_ACC_NODisabled = false;
+      this.isAGT_ID_ISSUEDDisabled = false;
+      this.isAGT_ID_ISSUED_DATEDisabled = false;
+      this.isAGT_APPOINT_DATEDisabled = false;
+      this.isAGT_SLII_EXAMDisabled = false;
+      this.isAGT_SLII_EXAM_DATEDisabled = false;
+      this.isAGT_AGMT_DATE_RECEIVEDDisabled = false;
+      this.isAGT_AGMT_DATE_ISSUEDDisabled = false;
+      this.isAGT_APP_DATE_RECEIVEDDisabled = false;
+      this.isAGT_APP_DATE_ISSUEDDisabled = false;
+      this.isAGT_TRNS_BRANCH_CODEDisabled = false;
+      this.isAGT_TRNS_BRANCH_DATEDisabled = false;
+      this.isAGT_STOP_COMM_DATEDisabled = false;
+      this.isAGT_STOP_COMM_REASONDisabled = false;
+      this.isAGT_RELEASE_COMM_DATEDisabled = false;
+      this.isAGT_RELEASE_COMM_REASONDisabled = false;
+      this.isAGT_CUSTOMER_COMPLAINDisabled = false;
+      this.isAGT_TERMINATE_NOTICE_DATEDisabled = false;
+      this.isAGT_TERMINATE_DATEDisabled = false;
+      this.isAGT_TERMINATE_REASONDisabled = false;
+      this.isAGT_BLACK_LISTED_DATEDisabled = false;
+      this.isAGT_DUES_TO_COMPANYDisabled = false;
+      this.isAGT_REJOINED_DATEDisabled = false;
+      this.isAGT_REMARKSDisabled = false;
+      this.isAGT_BUSINESS_TYPEDisabled = false;
+      this.isAGT_LEVEL_CODEDisabled = false;
+      this.isAGT_LEADER_CODEDisabled = false;
+      this.isAGT_STATUSDisabled = false;
+      this.isAGT_TERMINATE_STATUSDisabled = false;
+      this.isAGT_STOP_COMM_STATUSDisabled = false;
+      this.isAGT_ISS_STATUSDisabled = false;
+      this.isAGT_ISS_AMOUNTDisabled = false;
+      this.isAGT_ISS_GIVEN_DATEDisabled = false;
+      this.isAGT_ISS_CLOSE_DATEDisabled = false;
+      this.isAGT_RETAINER_STATUSDisabled = false;
+      this.isAGT_RETAINER_AMOUNTDisabled = false;
+      this.isAGT_RETAINER_GIVEN_DATEDisabled = false;
+      this.isAGT_RETAINER_CLOSE_DATEDisabled = false;
+      this.isAGT_LEADER_AGENT_CODE_VDisabled = false;
+      this.isAGT_LEADER_LEADER_CODE_VDisabled = false;
+      this.isAGT_LEADER_AGENT_CODE_HDisabled = false;
+      this.isAGT_LEADER_LEADER_CODE_HDisabled = false;
+      this.isAGT_CREATED_BYDisabled = false;
+      this.isAGT_DESIGNATION_IDDisabled = false;
+      this.isAGT_HIERARCHY_TYPE_IDDisabled = false;
+      this.isAGT_CHANGE_REASON_IDDisabled = false;
+      this.isAGT_EFFECTIVE_DATEDisabled = false;
+      this.isAGT_CHANGE_REASONDisabled = false;
+    }
+    if (Status == 'LOAD') {
+      this.isAGT_IDDisabled = true;
+      this.isAGT_CODEDisabled = true;
+      this.isAGT_TYPE_IDDisabled = true;
+      this.isAGT_CODE_IDDisabled = true;
+      this.isAGT_MDRT_STATUSDisabled = true;
+      this.isAGT_MDRT_YEARDisabled = true;
+      this.isAGT_SYSTEM_IDDisabled = true;
+      this.isAGT_SUB_CODEDisabled = true;
+      this.isAGT_LINE_OF_BUSINESSDisabled = true;
+      this.isAGT_CHANNELDisabled = true;
+      this.isAGT_LEVELDisabled = true;
+      this.isAGT_LANGUAGEDisabled = true;
+      this.isAGT_SUPER_CODEDisabled = true;
+      this.isAGT_TITLEDisabled = true;
+      this.isAGT_FIRST_NAMEDisabled = true;
+      this.isAGT_LAST_NAMEDisabled = true;
+      this.isAGT_ADD1Disabled = true;
+      this.isAGT_ADD2Disabled = true;
+      this.isAGT_ADD3Disabled = true;
+      this.isAGT_NIC_NODisabled = true;
+      this.isAGT_DOBDisabled = true;
+      this.isAGT_MOBILEDisabled = true;
+      this.isAGT_TEL_NODisabled = true;
+      this.isAGT_FAX_NODisabled = true;
+      this.isAGT_BRANCH_CODEDisabled = true;
+      this.isAGT_BANK_IDDisabled = true;
+      this.isAGT_BANK_BRANCH_IDDisabled = true;
+      this.isAGT_BANK_ACC_NODisabled = true;
+      this.isAGT_ID_ISSUEDDisabled = true;
+      this.isAGT_ID_ISSUED_DATEDisabled = true;
+      this.isAGT_APPOINT_DATEDisabled = true;
+      this.isAGT_SLII_EXAMDisabled = true;
+      this.isAGT_SLII_EXAM_DATEDisabled = true;
+      this.isAGT_AGMT_DATE_RECEIVEDDisabled = true;
+      this.isAGT_AGMT_DATE_ISSUEDDisabled = true;
+      this.isAGT_APP_DATE_RECEIVEDDisabled = true;
+      this.isAGT_APP_DATE_ISSUEDDisabled = true;
+      this.isAGT_TRNS_BRANCH_CODEDisabled = true;
+      this.isAGT_TRNS_BRANCH_DATEDisabled = true;
+      this.isAGT_STOP_COMM_DATEDisabled = true;
+      this.isAGT_STOP_COMM_REASONDisabled = true;
+      this.isAGT_RELEASE_COMM_DATEDisabled = true;
+      this.isAGT_RELEASE_COMM_REASONDisabled = true;
+      this.isAGT_CUSTOMER_COMPLAINDisabled = true;
+      this.isAGT_TERMINATE_NOTICE_DATEDisabled = true;
+      this.isAGT_TERMINATE_DATEDisabled = true;
+      this.isAGT_TERMINATE_REASONDisabled = true;
+      this.isAGT_BLACK_LISTED_DATEDisabled = true;
+      this.isAGT_DUES_TO_COMPANYDisabled = true;
+      this.isAGT_REJOINED_DATEDisabled = true;
+      this.isAGT_REMARKSDisabled = true;
+      this.isAGT_BUSINESS_TYPEDisabled = true;
+      this.isAGT_LEVEL_CODEDisabled = true;
+      this.isAGT_LEADER_CODEDisabled = true;
+      this.isAGT_STATUSDisabled = true;
+      this.isAGT_TERMINATE_STATUSDisabled = true;
+      this.isAGT_STOP_COMM_STATUSDisabled = true;
+      this.isAGT_ISS_STATUSDisabled = true;
+      this.isAGT_ISS_AMOUNTDisabled = true;
+      this.isAGT_ISS_GIVEN_DATEDisabled = true;
+      this.isAGT_ISS_CLOSE_DATEDisabled = true;
+      this.isAGT_RETAINER_STATUSDisabled = true;
+      this.isAGT_RETAINER_AMOUNTDisabled = true;
+      this.isAGT_RETAINER_GIVEN_DATEDisabled = true;
+      this.isAGT_RETAINER_CLOSE_DATEDisabled = true;
+      this.isAGT_LEADER_AGENT_CODE_VDisabled = true;
+      this.isAGT_LEADER_LEADER_CODE_VDisabled = true;
+      this.isAGT_LEADER_AGENT_CODE_HDisabled = true;
+      this.isAGT_LEADER_LEADER_CODE_HDisabled = true;
+      this.isAGT_CREATED_BYDisabled = true;
+      this.isAGT_DESIGNATION_IDDisabled = true;
+      this.isAGT_HIERARCHY_TYPE_IDDisabled = true;
+      this.isAGT_CHANGE_REASON_IDDisabled = true;
+      this.isAGT_EFFECTIVE_DATEDisabled = true;
+      this.isAGT_CHANGE_REASONDisabled = true;
+
+    }
+
+  }
+  //-----------------------------End------------------------------------
 }

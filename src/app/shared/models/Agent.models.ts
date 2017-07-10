@@ -71,5 +71,10 @@ export interface IAgent {
     AGT_LEADER_AGENT_CODE_H: string;
     AGT_LEADER_LEADER_CODE_H: string;
     AGT_CREATED_BY: string;
+    AGT_DESIGNATION_ID: number;
+    AGT_HIERARCHY_TYPE_ID: number;
+    AGT_CHANGE_REASON_ID: number;
+    AGT_EFFECTIVE_DATE: Date;
+    AGT_CHANGE_REASON: string;
 
 }

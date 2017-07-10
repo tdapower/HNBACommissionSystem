@@ -23,6 +23,9 @@ import { LevelService } from './shared/services/Level/level.service';
 import { UploadDocTypeService } from './shared/services/UploadDocType/upload-doc-type.service';
 import { UploadDocService } from './shared/services/UploadDoc/upload-doc.service';
 import { LanguageService } from './shared/services/Language/language.service';
+import { DesignationService } from './shared/services/Designation/designation.service';
+import { ChangereasonService } from './shared/services/ChangeReason/changereason.service';
+import { AgentHistoryService } from './shared/services/AgentHistory/agent-history.service';
 
 
 import { AgentComponent } from './pages/agent/agent.component';
@@ -79,7 +82,10 @@ import { ImageUploadComponent } from './pages/image-upload/image-upload.componen
     UploadDocTypeService,
     MainDashboardComponent,
     UploadDocService,
-    LanguageService
+    LanguageService,
+    DesignationService,
+    ChangereasonService,
+    AgentHistoryService
     ],
 
 
