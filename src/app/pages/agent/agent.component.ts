@@ -1015,6 +1015,7 @@ export class AgentComponent implements OnInit {
     }
   }
 
+
   public validateFieldsOLD() {
 
     this.isAgentDetailsValid = true;
