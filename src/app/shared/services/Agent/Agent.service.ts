@@ -12,6 +12,7 @@ import { USER } from '../../config/user';
 @Injectable()
 export class AgentService {
 
+  
   constructor(private http: Http) { }
 
   getAgent() {
@@ -19,6 +20,41 @@ export class AgentService {
       .map((response: Response) => response.json());
 
   }
+
+
+  checkTCSAuth(params) {
+
+      return this.http.post('http://192.168.10.31:7001/HNBWrapperServices_V0/HNBController/authuser', params)
+        .map((response: Response) => response.json())
+        .catch((error: any) => {
+          //this.handleError;
+          return Observable.throw(new Error(error.status))
+        });
+ 
+  }
+
+
+  SaveAgentTCS(params) {
+      return this.http.post('http://192.168.10.31:7001/HNBWrapperServices_V0/HNBController/party', params)
+        .map((response: Response) => response.json())
+        .catch((error: any) => {
+          //this.handleError;
+          return Observable.throw(new Error(error.status))
+        });
+ 
+  }
+
+
+  GetAgentTCS(params) {
+    return this.http.post('http://192.168.10.31:7001/HNBWrapperServices_V0/HNBController/party', params)
+      .map((response: Response) => response.json())
+      .catch((error: any) => {
+        //this.handleError;
+        return Observable.throw(new Error(error.status))
+      });
+
+}
+
 
 
   SaveAgent(params) {
@@ -95,5 +131,7 @@ export class AgentService {
         return Observable.throw(new Error(error.status))
       });
   }
+
+
 
 }

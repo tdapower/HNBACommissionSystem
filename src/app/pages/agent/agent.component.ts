@@ -33,14 +33,23 @@ import { ILevel } from '../../shared/models/Level.models';
 import { LanguageService } from '../../shared/services/Language/language.service';
 import { ILanguage } from '../../shared/models/Language.model';
 
-import { DesignationService } from '../../shared/services/Designation/designation.service';
-import { Idesignation } from '../../shared/models/Designation.models';
+import { DesignationService } from '../../shared/services/designation/designation.service';
+import { Idesignation } from '../../shared/models/designation.models';
 
 import { ChangereasonService } from '../../shared/services/ChangeReason/changereason.service';
 import { IChangeReason } from '../../shared/models/ChangeReason.models';
 
 import { AgentHistoryService } from '../../shared/services/AgentHistory/agent-history.service';
 import { IagentHistory } from '../../shared/models/AgentHistory.models';
+
+import { LeaderCodeSearchService } from '../../shared/services/LeaderCodeSearch/leader-code-search.service';
+import { IAgentLeaderCode } from '../../shared/models/AgentLeaderCode.models';
+
+import { AgentAttachedService } from '../../shared/services/AgentAttached/agent-attached.service';
+import { IAgentAttached } from '../../shared/models/AgentAttached.models';
+
+import { ITCSAuth } from '../../shared/models/TCSAuth.models';
+import { IAgentTCS } from '../../shared/models/AgentTCS.models';
 
 
 import { DatePipe } from '@angular/common';
@@ -72,6 +81,7 @@ export class AgentComponent implements OnInit {
   isDisabled: boolean = false;
   xxx: boolean = true;
   isNewRecord: boolean = false;
+  test: string = '';
 
   branchList: Array<Object> = [];
   bankList: Array<Object> = [];
@@ -82,12 +92,14 @@ export class AgentComponent implements OnInit {
   AgentLevelList: Array<ILevel> = [];
   UploadDocTypeList: Array<IUploadDocType> = [];
   UploadDocList: Array<IUploadDocType> = [];
+  AttachedAgentsUploadDocList: Array<IUploadDocType> = [];
   LanguageList: Array<ILanguage> = [];
   DesignationList: Array<ILanguage> = [];
   ChangeReasonList: Array<ILanguage> = [];
   BranchTransferList: Array<ILanguage> = [];
   StopCommissionList: Array<ILanguage> = [];
   ReleaseCommissionList: Array<ILanguage> = [];
+  AgentAttachedList: Array<IAgentAttached> = [];
 
 
 
@@ -120,6 +132,7 @@ export class AgentComponent implements OnInit {
   AGT_MOBILE: string = '';
   AGT_TEL_NO: string = '';
   AGT_FAX_NO: string = '';
+  AGT_EMAIL: string = '';
   AGT_BRANCH_CODE: string = '';
   AGT_BANK_ID: number = 0;
   AGT_BANK_BRANCH_ID: number = 0;
@@ -174,6 +187,11 @@ export class AgentComponent implements OnInit {
   AGT_IMAGE: string;
 
 
+  //---TCS Agent Record Status----
+  AGT_CODE_TCS: string = '';
+  AGT_NAME_TCS: string = '';
+  AGT_STATUS_TCS: string = '';
+  //------------------------------
 
 
   //--------------------Control Enabled Disabled variables----------------------
@@ -201,6 +219,7 @@ export class AgentComponent implements OnInit {
   isAGT_MOBILEDisabled: boolean = false;
   isAGT_TEL_NODisabled: boolean = false;
   isAGT_FAX_NODisabled: boolean = false;
+  isAGT_EMAILDisabled: boolean = false;
   isAGT_BRANCH_CODEDisabled: boolean = false;
   isAGT_BANK_IDDisabled: boolean = false;
   isAGT_BANK_BRANCH_IDDisabled: boolean = false;
@@ -263,9 +282,12 @@ export class AgentComponent implements OnInit {
 
 
   rtnDate: Date;
+  vText: string;
   //-----------------------------
 
   isAgentDetailsValid: boolean = true;
+  isAgentAttachedChanged: string = '';
+  vHOSTED_URL_PREFIX: string = '';
 
 
   //------------------For field Validation-------------
@@ -290,6 +312,7 @@ export class AgentComponent implements OnInit {
   AGT_MOBILE_CLS: string = '';
   AGT_TEL_NO_CLS: string = '';
   AGT_FAX_NO_CLS: string = '';
+  AGT_EMAIL_CLS: string = '';
   AGT_BRANCH_CODE_CLS: string = '';
   AGT_BANK_ID_CLS: string = '';
   AGT_BANK_BRANCH_ID_CLS: string = '';
@@ -356,6 +379,18 @@ export class AgentComponent implements OnInit {
   AGT_HISTORY_Column5: string;
   //-------------------------------------------------
 
+
+  //TCS Auth-----------------------------------------
+  TCS_USER_CODE: string;
+  TCS_ERROR_CODE: string;
+  TCS_SESSION_ID: string;
+  TCS_ACTION_EVENT: string;
+  TCS_ROLE_CODE: string;
+  TCS_PASSWORD: string;
+  TCS_BRANCH_CODE: string;
+  //-------------------------------------------------
+
+
   //Agent Upload Docs--------------------------------
   AGT_PROFILE_ID: number = 0;
   AGT_PROFILE_AGT_CODE: string = "";
@@ -368,6 +403,17 @@ export class AgentComponent implements OnInit {
 
   AGT_UPLOAD_DOC_DESC: string = "";
   //-------------------------------------------------
+
+
+  //Agent Upload Docs--------------------------------
+  AGT_PROFILE_DOC_URL_LEADER_V: string = "";
+  //-------------------------------------------------
+
+  //Agent Upload Docs--------------------------------
+  AGT_PROFILE_DOC_URL_LEADER_H: string = "";
+  //-------------------------------------------------
+
+
 
   TempStr1: string = "";
   TempStr2: string = "";
@@ -386,6 +432,8 @@ export class AgentComponent implements OnInit {
   inputUploadEvents: EventEmitter<string>;
 
 
+  TestString: string = "";
+
 
   datepickerOpts = {
     format: 'dd/mm/yyyy'
@@ -397,6 +445,7 @@ export class AgentComponent implements OnInit {
     private UploadDocService: UploadDocService, private LanguageService: LanguageService,
     moment: MomentModule, private router: Router, private DesignationService: DesignationService,
     private ChangereasonService: ChangereasonService, private AgentHistoryService: AgentHistoryService,
+    private LeaderCodeSearchService: LeaderCodeSearchService, private AgentAttachedService: AgentAttachedService,
     @Inject(NgZone) private zone: NgZone,
     private ref: ChangeDetectorRef) {
 
@@ -407,6 +456,9 @@ export class AgentComponent implements OnInit {
 
   ngOnInit() {
     try {
+
+
+      this.vHOSTED_URL_PREFIX = URL_CONST.HOSTED_URL_PREFIX;
 
       this.getBranches();
       this.getBanks();
@@ -428,6 +480,9 @@ export class AgentComponent implements OnInit {
 
       this.isDisabled = true;
 
+      this.test = "active"
+
+      //this.GetRecordTCS();
 
     } catch (error) {
       alert('Error Ocurred...!');
@@ -435,6 +490,22 @@ export class AgentComponent implements OnInit {
 
   }
 
+  GetLeaderCode() {
+    console.log('xx');
+    console.log(this.AGT_LEADER_AGENT_CODE_V);
+    this.LeaderCodeSearchService.GetLeaderCodeByAgentCode(this.AGT_LEADER_AGENT_CODE_V)
+      .subscribe((data) => {
+        console.log(data);
+        let obj: IAgentLeaderCode = JSON.parse(data);
+        console.log(obj);
+
+        console.log(obj.LEADER_LEADER_CODE);
+
+        this.AGT_LEADER_LEADER_CODE_V = obj.LEADER_LEADER_CODE;
+
+      });
+
+  }
 
   GetBranchTransferHistory(typeID) {
     //1 = Transfer Branch History
@@ -470,7 +541,6 @@ export class AgentComponent implements OnInit {
       (err) => console.log(err));
   }
 
-
   GetReleaseCommissionHistory(typeID) {
     //1 = Transfer Branch History
     //2 = Stop Commission History
@@ -488,7 +558,6 @@ export class AgentComponent implements OnInit {
       (err) => console.log(err));
   }
 
-
   getDesignation() {
     this.DesignationService.getdesignations()
       .subscribe((data) => {
@@ -499,7 +568,6 @@ export class AgentComponent implements OnInit {
       (err) => console.log(err));
   }
 
-
   getChangeReason() {
     this.ChangereasonService.getchangereasons()
       .subscribe((data) => {
@@ -509,7 +577,6 @@ export class AgentComponent implements OnInit {
       },
       (err) => console.log(err));
   }
-
 
   getLanguage() {
     this.LanguageService.getLanguage()
@@ -548,7 +615,6 @@ export class AgentComponent implements OnInit {
 
         let obj: IUploadDoc = JSON.parse(JSON.stringify(data));
 
-
         this.AGT_PROFILE_ID = obj.Id;
         this.AGT_PROFILE_AGT_CODE = obj.AgtCode;
         this.AGT_PROFILE_DOC_TYPE_ID = obj.DocTypeId;
@@ -558,28 +624,54 @@ export class AgentComponent implements OnInit {
         this.AGT_PROFILE_CREATDEDATE = obj.CreatedDate;
         this.AGT_PROFILE_EFFECTIVEENDDATE = obj.EffectiveEndDate;
 
-        console.log(obj);
-
-
-
         this.AGT_IMAGE = URL_CONST.HOSTED_URL_PREFIX + this.AGT_PROFILE_DOC_URL;
 
-        //  Id:number;
-        //  AgtId:number;
-        //  DocTypeId:number;
-        //  DocTypeDesc:String;
-        //  DocUrl:string;
-        //  CreatedBy:string ;
-        //  CreatedDate:string ;
-        //  EffectiveEndDate:string ;
+      });
+  }
 
-        console.log(this.AGT_IMAGE);
-        //this.AGT_IMAGE = "http://192.168.10.172:8082/comm_docs/2017/123/IMG_6510.JPG";
+  getLeader_VProfilePicByAgentID(AgentCode) {
+
+    this.UploadDocService.getLeader_VProfilePicByAgentID(AgentCode)
+      .subscribe((data) => {
+
+        console.log(data);
+
+        let obj: IUploadDoc = JSON.parse(JSON.stringify(data));
+
+        if (obj == null) {
+          this.AGT_PROFILE_DOC_URL_LEADER_V = null;
+        }
+
+        this.AGT_PROFILE_DOC_URL_LEADER_V = obj.DocUrl.toString();
+
+        this.AGT_PROFILE_DOC_URL_LEADER_V = URL_CONST.HOSTED_URL_PREFIX + this.AGT_PROFILE_DOC_URL_LEADER_V;
+
+        console.log('getLeader_VProfilePicByAgentID' + this.AGT_PROFILE_DOC_URL_LEADER_V);
+
+      });
+  }
+
+  getLeader_HProfilePicByAgentID(AgentCode) {
+
+    this.UploadDocService.getLeader_HProfilePicByAgentID(AgentCode)
+      .subscribe((data) => {
+
+        console.log(data);
+
+        let obj: IUploadDoc = JSON.parse(JSON.stringify(data));
+
+        if (obj == null) {
+          this.AGT_PROFILE_DOC_URL_LEADER_H = null;
+        }
+
+        this.AGT_PROFILE_DOC_URL_LEADER_H = obj.DocUrl.toString();
+
+        this.AGT_PROFILE_DOC_URL_LEADER_H = URL_CONST.HOSTED_URL_PREFIX + this.AGT_PROFILE_DOC_URL_LEADER_H;
+
       });
   }
 
   setDocumentPath = function (index, DocPath) {
-
 
     window.open('http://192.168.10.172:8082/comm_docs' + DocPath);
 
@@ -666,6 +758,16 @@ export class AgentComponent implements OnInit {
       (err) => console.log(err));
   }
 
+  getAttachedAgentsUploadDocByAgentID(AGENT_ID) {
+    this.UploadDocService.getAttachedAgentsUploadDocByAgentID(AGENT_ID)
+      .subscribe((data) => {
+        console.log(data);
+
+        this.AttachedAgentsUploadDocList = data;
+      },
+      (err) => console.log(err));
+  }
+
   getUploadDocTypes() {
     this.UploadDocTypeService.getUploadDocTypes()
       .subscribe((data) => {
@@ -709,9 +811,12 @@ export class AgentComponent implements OnInit {
       (err) => console.log(err));
   }
 
-  //--------------Check Date when Save-------------
+  //--------------Check Date when Save--------------------------------------------------
   SetDateFormat(vDate): Date {
     var moment = require('moment');
+
+    // console.log('SetDateFormat');
+    // console.log(vDate);
 
     if (vDate == undefined || vDate == '') {//alert(vDate);
       this.rtnDate = moment('01/01/1900'.toString()).format('DD/MM/YYYY');
@@ -720,21 +825,675 @@ export class AgentComponent implements OnInit {
     }
     return this.rtnDate;
   }
-  //-------------------------------------------------------------
-  //-------------Check Date when Retrive-----------
+  //------------------------------------------------------------------------------------
+
+
+  //-------------Check Date when Retrive------------------------------------------------
   SetDateFormatNew(vDate): Date {
     var moment = require('moment');
 
-    console.log(vDate);
+    // console.log('SetDateFormatNew');
+    // console.log(vDate);
 
-    if ((vDate == '01/01/2000 00:00:00') || (moment(vDate.toString().substr(0, 10), 'DD/MM/YYYY').toDate() == moment('01/01/1900 00:00:00'.toString().substr(0, 10), 'DD/MM/YYYY').toDate()) || (vDate == '01/01/1900 12:00:00 AM')) {//alert(vDate);
+    if ((vDate == '01/01/2000 12:00:00 AM') || (vDate == '01/01/2000 00:00:00') || (moment(vDate.toString().substr(0, 10), 'DD/MM/YYYY').toDate() == moment('01/01/1900 00:00:00'.toString().substr(0, 10), 'DD/MM/YYYY').toDate()) || (vDate == '01/01/1900 12:00:00 AM') || (vDate == '01/01/1900 00:00:00')) {//alert(vDate);
       this.rtnDate = null;//moment('01/01/1900'.toString()).format('DD/MM/YYYY');
     } else {
       this.rtnDate = moment(vDate.toString().substr(0, 10), 'DD/MM/YYYY').toDate();// moment(vDate).format('DD/MM/YYYY');
     }
     return this.rtnDate;
   }
-  //-------------------------------------------------------------
+  //------------------------------------------------------------------------------------
+
+
+
+
+  //when terminate check weather any attached subordinates and ask for a confirmation to attached all those to top level
+  GetAgentAttachedList(vAgentCode) {
+    this.AgentAttachedService.getAgentAttachedListByAgentCode(this.AGT_CODE)
+      .subscribe((data) => {
+        this.AgentAttachedList = data;
+      },
+      (err) => console.log(err));
+
+  }
+  //--------------------------------------------------------------------------------------------------------------------
+
+
+
+  GetTCSAuth(UserCode, Password, BranchCode, RoleCode): Promise<any> {
+
+    return new Promise((resolve, reject) => {
+
+
+      //alert('CheckTCSAuth Called');
+
+      let objTCS: ITCSAuth = {
+        userCode: 'JANAKATEST',
+        passWord: 'test@2017',
+        branchCode: 'HDO',
+        roleCode: 'SUPERUSER',
+        errorCode: '',
+        errorMessage: '',
+        sessionId: '',
+        actionEvent: 'LOGIN'
+      }
+
+      this.AgentService.checkTCSAuth(objTCS)
+        .subscribe((data) => {
+          let obj: ITCSAuth = JSON.parse(JSON.stringify(data));
+          //alert(obj.sessionId);
+
+          console.log(data);
+          // this.AGT_PROFILE_ID = obj.Id;
+          // this.AGT_PROFILE_AGT_CODE = obj.AgtCode;
+          this.TCS_SESSION_ID = obj.sessionId;
+
+          resolve(obj.sessionId);
+
+        }, (err) => {
+          console.error('err', err);
+          reject(err);
+        });
+
+
+    });
+  }
+
+
+  SaveRecordTCS(AgentOBJ, vAgentCode) {
+    try {
+
+      var moment = require('moment');
+      //this.CheckTCSAuth();
+
+      //alert('SessionID Janaka');
+      //alert(this.TCS_SESSION_ID);
+
+      this.GetTCSAuth('', '', '', '').then((sessionId) => {
+
+        let obj: IAgentTCS = {
+          userCode: "JANAKATEST",
+          errorCode: "",
+          roleCode: "SUPERUSER",
+          errorMessage: "",
+          sessionId: "nFmHhqqBW5TC8PnGdlG28B0nTmfZQ1LqtQLGcGpcYq67ClcS6N3T!-1906674343!1512745569592",//this.TCS_SESSION_ID,
+          actionEvent: "ADDPARTY",
+          partycode: this.AGT_CODE,
+          partytype: "I", //ASK TCS
+          firstname: this.AGT_FIRST_NAME,
+          middlename: "",
+          lastname: this.AGT_LAST_NAME,
+          othername: "",
+          businessname: "",
+          registrationno: "",
+          registrationdate: "",
+          typeoforganization: "",
+          title: "MR", //ASK TCS
+          nicno: this.AGT_NIC_NO,
+          sicno: "",
+          sex: "M", //ASK TCS
+          nationality: "SRILANKAN",
+          occupation: "RETIRED", //ASK TCS
+          parentpartycode: "",
+          startdate: "23/11/2017 05:10:00",
+          stakeCodeSet:
+          [
+            {
+              stakeCode: "AGENT",
+              stakeProperties:
+              [{
+                propertyName: "Bank Account Number",
+                propertyValue: this.AGT_BANK_ACC_NO
+              },
+              {
+                propertyName: "Bank Branch Name",
+                propertyValue: "ICICI" //ASK TCS
+              },
+              {
+                propertyName: "Bank Name",
+                propertyValue: "sdfs"//ASK TCS
+              },
+              {
+                propertyName: "Agency Branch Code",
+                propertyValue: "AMBALANGODA" //ASK TCS
+              },
+              {
+                propertyName: "Line Of Business",
+                propertyValue: "LIFE" //ASK TCS
+              },
+              {
+                propertyName: "Channel Code for Agent",
+                propertyValue: "Group Agency" //ASK TCS
+              },
+              {
+                propertyName: "Designation Code",
+                propertyValue: "Senior Group Field Manager" //ASK TCS
+              },
+              {
+                propertyName: "Leader Code",
+                propertyValue: this.AGT_LEADER_CODE //ASK TCS
+              },
+              {
+                propertyName: "Leader Given Date",
+                propertyValue: this.SetDateFormat(this.AGT_ISS_GIVEN_DATE).toString() // PLEASE CHECK
+              },
+              {
+                propertyName: "Privilege for Issue Certificate with Pending Requirements",
+                propertyValue: "NO"
+              },
+              {
+                propertyName: "Date of Birth",
+                propertyValue: this.SetDateFormat(this.AGT_DOB).toString()
+              },
+              {
+                propertyName: "Stop commission",
+                propertyValue: "N"//ASK TCS
+              },
+              {
+                propertyName: "Stopped Commission  Reason",
+                propertyValue: this.AGT_STOP_COMM_REASON
+              },
+              {
+                propertyName: "Customer Complain Details",
+                propertyValue: this.AGT_CUSTOMER_COMPLAIN
+              },
+              {
+                propertyName: "Retainer Amount",
+                propertyValue: this.AGT_RETAINER_AMOUNT.toString()
+              },
+              {
+                propertyName: "Retainer",
+                propertyValue: "1"//this.AGT_RETAINER_STATUS
+              },
+              {
+                propertyName: "Retainer Valid Until",
+                propertyValue: this.SetDateFormat(this.AGT_RETAINER_CLOSE_DATE).toString()
+              },
+              {
+                propertyName: "Identity Card Issued Date",
+                propertyValue: this.SetDateFormat(this.AGT_ID_ISSUED_DATE).toString()
+              },
+              {
+                propertyName: "Exam passed date",
+                propertyValue: this.SetDateFormat(this.AGT_SLII_EXAM_DATE).toString()
+              },
+              {
+                propertyName: "Field Management Income Support Status",
+                propertyValue: "1"//ASK TCS
+              },
+              {
+                propertyName: "Stop commission date",
+                propertyValue: this.SetDateFormat(this.AGT_STOP_COMM_DATE).toString()
+              },
+              {
+                propertyName: "Commission release date",
+                propertyValue: this.SetDateFormat(this.AGT_RELEASE_COMM_DATE)
+              },
+              {
+                propertyName: "Reason for termination",
+                propertyValue: this.AGT_TERMINATE_REASON
+              },
+              {
+                propertyName: "Income Support Amount",
+                propertyValue: this.AGT_ISS_AMOUNT.toString()
+              },
+              {
+                propertyName: "Appointed date",
+                propertyValue: moment(this.SetDateFormat(this.AGT_APPOINT_DATE)).format('DD/MM/YYYY')
+              },
+              {
+                propertyName: "Income Support Given Date",
+                propertyValue: this.SetDateFormat(this.AGT_ISS_GIVEN_DATE)
+              },
+              {
+                propertyName: "Income Support closed date",
+                propertyValue: this.SetDateFormat(this.AGT_ISS_CLOSE_DATE)
+              },
+              {
+                propertyName: "Notice of Termination date",
+                propertyValue: this.SetDateFormat(this.AGT_TERMINATE_NOTICE_DATE)
+              },
+              {
+                propertyName: "Terminated date",
+                propertyValue: this.SetDateFormat(this.AGT_TERMINATE_DATE)
+              },
+              {
+                propertyName: "Reinstated Date",
+                propertyValue: this.SetDateFormat(this.AGT_REJOINED_DATE)
+              },
+              {
+                propertyName: "Transfer date",
+                propertyValue: this.TCS_BRANCH_CODE
+              },
+              {
+                propertyName: "Advisor Status",
+                propertyValue: "Active" //ASK TCS
+              }
+              ]
+            }],
+          relatedPartySet:
+          [{
+            relationCode: "BRANCH",
+            partyCode: "HDO"
+          }],
+          mailingaddressline1: this.AGT_ADD1,
+          mailingaddressline2: this.AGT_ADD2,
+          mailingaddressline3: this.AGT_ADD3,
+          mailingcitylocation: "ADD_CHENAI",
+          mailingprovince: "AP",
+          countrycode: "EASTERN",
+          mailingzipcode: "700154",
+          mailingfax: "",
+          mailingphonework: "0887895563",
+          mailingphonecell: "",
+          mailingphonehome: "",
+          mailingemail1: "",
+          mailingemail2: "",
+          mailingemail3: "",
+          permanentaddresssame: "Y",
+          permanentaddress1: "",
+          permanentaddress2: "",
+          permanentaddress3: "",
+          permanentcitylocation: "",
+          permanentprovince: "",
+          permanentcountrycode: "",
+          permanentzipcode: "",
+          permanentfaxno: "",
+          permanentphonework: "",
+          permanentphonecell: "",
+          permanentphonehome: "",
+          permanentemail1: "",
+          permanentemail2: "",
+          permanentemail3: "",
+          partyStatus: "",
+          searchResMaxRange: "40",
+          searchResMinRange: "1",
+          permanentadddeleteind: "",
+          mailingadddeleteind: ""
+        }
+
+        this.AgentService.SaveAgentTCS(obj)
+          .subscribe((data) => {
+
+            let obj1: Array<IAgentTCS> = JSON.parse(JSON.stringify(data));
+
+            console.log(obj1[0].errorMessage);
+
+            alert(obj1[0].errorMessage);
+
+          }, (err) => {
+            console.error('err', err);
+          });
+
+      });
+
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+
+  UpdateRecordTCS(AgentOBJ, vAgentCode) {
+    try {
+
+      var moment = require('moment');
+
+      this.GetTCSAuth('', '', '', '').then((sessionId) => {
+
+        console.log('XXX ' + this.TCS_SESSION_ID);
+
+
+        let obj: IAgentTCS = {
+          userCode: "JANAKATEST",
+          errorCode: "",
+          roleCode: "SUPERUSER",
+          errorMessage: "",
+          sessionId: this.TCS_SESSION_ID,
+          actionEvent: "MODIFYPARTY",
+          partycode: this.AGT_CODE,
+          partytype: "I", //ASK TCS
+          firstname: this.AGT_FIRST_NAME,
+          middlename: "",
+          lastname: this.AGT_LAST_NAME,
+          othername: "",
+          businessname: "HNB ASSURANCE PLC",
+          registrationno: "PQ108",
+          registrationdate: "01/01/1900",
+          typeoforganization: "O",
+          title: "MR", //ASK TCS
+          nicno: this.AGT_NIC_NO,
+          sicno: "1234567890",
+          sex: "M", //ASK TCS
+          nationality: "SRILANKAN",
+          occupation: "RETIRED", //ASK TCS
+          parentpartycode: "",
+          startdate: "23/11/2017 05:10:00",
+          stakeCodeSet:
+          [
+            {
+              stakeCode: "AGENT",
+              stakeProperties:
+              [{
+                propertyName: "Bank Account Number",
+                propertyValue: this.AGT_BANK_ACC_NO
+              },
+              {
+                propertyName: "Bank Branch Name",
+                propertyValue: "ICICI" //ASK TCS
+              },
+              {
+                propertyName: "Bank Name",
+                propertyValue: "sdfs"//ASK TCS
+              },
+              {
+                propertyName: "Agency Branch Code",
+                propertyValue: "AMBALANGODA" //ASK TCS
+              },
+              {
+                propertyName: "Line Of Business",
+                propertyValue: "LIFE" //ASK TCS
+              },
+              {
+                propertyName: "Channel Code for Agent",
+                propertyValue: "Group Agency" //ASK TCS
+              },
+              {
+                propertyName: "Designation Code",
+                propertyValue: "Senior Group Field Manager" //ASK TCS
+              },
+              {
+                propertyName: "Leader Code",
+                propertyValue: this.AGT_LEADER_CODE //ASK TCS
+              },
+              {
+                propertyName: "Leader Given Date",
+                propertyValue: this.SetDateFormat(this.AGT_ISS_GIVEN_DATE).toString() // PLEASE CHECK
+              },
+              {
+                propertyName: "Privilege for Issue Certificate with Pending Requirements",
+                propertyValue: "NO"
+              },
+              {
+                propertyName: "Date of Birth",
+                propertyValue: this.SetDateFormat(this.AGT_DOB).toString()
+              },
+              {
+                propertyName: "Stop commission",
+                propertyValue: "N"//ASK TCS
+              },
+              {
+                propertyName: "Stopped Commission  Reason",
+                propertyValue: this.AGT_STOP_COMM_REASON
+              },
+              {
+                propertyName: "Customer Complain Details",
+                propertyValue: this.AGT_CUSTOMER_COMPLAIN
+              },
+              {
+                propertyName: "Retainer Amount",
+                propertyValue: this.AGT_RETAINER_AMOUNT.toString()
+              },
+              {
+                propertyName: "Retainer",
+                propertyValue: "1"//this.AGT_RETAINER_STATUS
+              },
+              {
+                propertyName: "Retainer Valid Until",
+                propertyValue: this.SetDateFormat(this.AGT_RETAINER_CLOSE_DATE).toString()
+              },
+              {
+                propertyName: "Identity Card Issued Date",
+                propertyValue: this.SetDateFormat(this.AGT_ID_ISSUED_DATE).toString()
+              },
+              {
+                propertyName: "Exam passed date",
+                propertyValue: this.SetDateFormat(this.AGT_SLII_EXAM_DATE).toString()
+              },
+              {
+                propertyName: "Field Management Income Support Status",
+                propertyValue: "1"//ASK TCS
+              },
+              {
+                propertyName: "Stop commission date",
+                propertyValue: this.SetDateFormat(this.AGT_STOP_COMM_DATE).toString()
+              },
+              {
+                propertyName: "Commission release date",
+                propertyValue: this.SetDateFormat(this.AGT_RELEASE_COMM_DATE)
+              },
+              {
+                propertyName: "Reason for termination",
+                propertyValue: this.AGT_TERMINATE_REASON
+              },
+              {
+                propertyName: "Income Support Amount",
+                propertyValue: this.AGT_ISS_AMOUNT.toString()
+              },
+              {
+                propertyName: "Appointed date",
+                propertyValue: moment(this.SetDateFormat(this.AGT_APPOINT_DATE)).format('DD/MM/YYYY')
+              },
+              {
+                propertyName: "Income Support Given Date",
+                propertyValue: this.SetDateFormat(this.AGT_ISS_GIVEN_DATE)
+              },
+              {
+                propertyName: "Income Support closed date",
+                propertyValue: this.SetDateFormat(this.AGT_ISS_CLOSE_DATE)
+              },
+              {
+                propertyName: "Notice of Termination date",
+                propertyValue: this.SetDateFormat(this.AGT_TERMINATE_NOTICE_DATE)
+              },
+              {
+                propertyName: "Terminated date",
+                propertyValue: this.SetDateFormat(this.AGT_TERMINATE_DATE)
+              },
+              {
+                propertyName: "Reinstated Date",
+                propertyValue: this.SetDateFormat(this.AGT_REJOINED_DATE)
+              },
+              {
+                propertyName: "Transfer date",
+                propertyValue: this.TCS_BRANCH_CODE
+              },
+              {
+                propertyName: "Advisor Status",
+                propertyValue: "Active" //ASK TCS
+              }
+              ]
+            }],
+          relatedPartySet:
+          [{
+            relationCode: "BRANCH",
+            partyCode: "HDO"
+          }],
+          mailingaddressline1: this.AGT_ADD1,
+          mailingaddressline2: this.AGT_ADD2,
+          mailingaddressline3: this.AGT_ADD3,
+          mailingcitylocation: "ADD_CHENAI",
+          mailingprovince: "AP",
+          countrycode: "EASTERN",
+          mailingzipcode: "700154",
+          mailingfax: "",
+          mailingphonework: "0887895563",
+          mailingphonecell: "",
+          mailingphonehome: "",
+          mailingemail1: "",
+          mailingemail2: "",
+          mailingemail3: "",
+          permanentaddresssame: "Y",
+          permanentaddress1: this.AGT_ADD1,
+          permanentaddress2: this.AGT_ADD2,
+          permanentaddress3: this.AGT_ADD3,
+          permanentcitylocation: "colombo",
+          permanentprovince: "western",
+          permanentcountrycode: "5555",
+          permanentzipcode: "",
+          permanentfaxno: "",
+          permanentphonework: "",
+          permanentphonecell: "",
+          permanentphonehome: "",
+          permanentemail1: this.AGT_EMAIL,
+          permanentemail2: this.AGT_EMAIL,
+          permanentemail3: this.AGT_EMAIL,
+          partyStatus: "",
+          searchResMaxRange: null,
+          searchResMinRange: null,
+          permanentadddeleteind: "",
+          mailingadddeleteind: ""
+        }
+
+
+        console.log('Before');
+        console.log(obj);
+
+        this.AgentService.SaveAgentTCS(obj)
+          .subscribe((data) => {
+
+            let obj1: Array<IAgentTCS> = JSON.parse(JSON.stringify(data));
+
+            console.log(obj1[0].errorMessage);
+
+            alert(obj1[0].errorMessage);
+
+            console.log(obj1);
+
+          }, (err) => {
+            console.error('err', err);
+          });
+
+      });
+
+
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+
+  GetRecordTCS(AGENT_CODE_SELECTED) {
+    try {
+
+      console.log('GetRecordTCS');
+
+      this.AGT_CODE_TCS = null;
+      this.AGT_NAME_TCS = null;
+      this.AGT_STATUS_TCS = null;
+
+
+      this.GetTCSAuth('', '', '', '').then((sessionId) => {
+
+
+        // if (AGENT_ID = null) {
+        //   alert('No Record');
+        // }
+
+
+        let obj2: IAgentTCS = {
+          userCode: "JANAKATEST",
+          errorCode: "",
+          roleCode: "SUPERUSER",
+          errorMessage: "",
+          sessionId: this.TCS_SESSION_ID,//this.CheckTCSAuth('','','','').toString(),//
+          actionEvent: "SEARCHPARTY",
+          partycode: AGENT_CODE_SELECTED,
+          partytype: "I",
+          firstname: "",
+          middlename: "",
+          lastname: "",
+          othername: "",
+          businessname: "",
+          registrationno: "",
+          registrationdate: "",
+          typeoforganization: "",
+          title: "",
+          nicno: "",
+          sicno: "",
+          sex: "",
+          nationality: "",
+          occupation: "",
+          parentpartycode: "",
+          startdate: "",
+          stakeCodeSet:
+          [
+            {
+              stakeCode: "AGENT",
+              stakeProperties:
+              [{
+                propertyName: "",
+                propertyValue: ""
+              }]
+            }],
+          relatedPartySet:
+          [{
+            relationCode: "",
+            partyCode: ""
+          }],
+          mailingaddressline1: "",
+          mailingaddressline2: "",
+          mailingaddressline3: "",
+          mailingcitylocation: "",
+          mailingprovince: "",
+          countrycode: "",
+          mailingzipcode: "",
+          mailingfax: "",
+          mailingphonework: "",
+          mailingphonecell: "",
+          mailingphonehome: "",
+          mailingemail1: "",
+          mailingemail2: "",
+          mailingemail3: "",
+          permanentaddresssame: "",
+          permanentaddress1: "",
+          permanentaddress2: "",
+          permanentaddress3: "",
+          permanentcitylocation: "",
+          permanentprovince: "",
+          permanentcountrycode: "",
+          permanentzipcode: "",
+          permanentfaxno: "",
+          permanentphonework: "",
+          permanentphonecell: "",
+          permanentphonehome: "",
+          permanentemail1: "",
+          permanentemail2: "",
+          permanentemail3: "",
+          partyStatus: "",
+          searchResMaxRange: "2",
+          searchResMinRange: "1",
+          permanentadddeleteind: "",
+          mailingadddeleteind: ""
+        }
+
+
+        this.AgentService.GetAgentTCS(obj2)
+          .subscribe((data) => {
+
+            console.log(data);
+
+            let obj3: Array<IAgentTCS> = JSON.parse(JSON.stringify(data));
+
+            console.log('SEARCH OBJECT');
+            console.log(obj3);
+            console.log(obj3[0].partycode);
+
+            this.AGT_CODE_TCS = obj3[0].partycode;
+            this.AGT_NAME_TCS = obj3[0].firstname + ' ' + obj3[0].lastname;
+            this.AGT_STATUS_TCS = obj3[0].partyStatus;
+
+
+          }, (err) => {
+            console.error('err', err);
+          });
+
+      });
+
+    } catch (error) {
+      alert(error);
+    }
+  }
+
   SaveRecord() {
     try {
 
@@ -743,6 +1502,37 @@ export class AgentComponent implements OnInit {
         alert('Please check mandotory fields.....');
         return;
       }
+
+
+      //this.CheckTCSAuth();
+
+      //---------------------------------------------------------------------------------------------------------------------
+      // 0 - SELECT  ,  1 - YES ,  2 - NO
+      //when terminate check weather any attached subordinates and ask for a confirmation to attached all those to top level
+      this.isAgentAttachedChanged = 'NO';
+
+      if (this.AGT_TERMINATE_STATUS == 1) {
+
+        this.GetAgentAttachedList(this.AGT_CODE);
+
+        if ((this.AgentAttachedList.length > 0)) {
+
+          let result = confirm("There are subordinate attached you want to move them to next higher level...");
+          if (result == true) {
+            this.isAgentAttachedChanged = 'YES';
+          }
+          else {
+            this.isAgentAttachedChanged = 'NO';
+          }
+
+        }
+      }
+      else {
+        this.isAgentAttachedChanged = 'NO';
+      }
+      //=====================================================================================================================
+
+
 
 
       var moment = require('moment');
@@ -797,6 +1587,7 @@ export class AgentComponent implements OnInit {
         AGT_MOBILE: this.AGT_MOBILE,
         AGT_TEL_NO: this.AGT_TEL_NO,
         AGT_FAX_NO: this.AGT_FAX_NO,
+        AGT_EMAIL: this.AGT_EMAIL,
         AGT_BRANCH_CODE: this.AGT_BRANCH_CODE,
         AGT_BANK_ID: this.AGT_BANK_ID,
         AGT_BANK_BRANCH_ID: this.AGT_BANK_BRANCH_ID,
@@ -851,40 +1642,73 @@ export class AgentComponent implements OnInit {
         AGT_HIERARCHY_TYPE_ID: this.AGT_HIERARCHY_TYPE_ID,
         AGT_CHANGE_REASON_ID: this.AGT_CHANGE_REASON_ID,
         AGT_EFFECTIVE_DATE: FormattedAGT_EFFECTIVE_DATE,//null,//this.AGT_EFFECTIVE_DATE,
-        AGT_CHANGE_REASON: this.AGT_CHANGE_REASON
-
+        AGT_CHANGE_REASON: this.AGT_CHANGE_REASON,
+        AGT_IS_AGENT_ATTACHED_CHANGED: this.isAgentAttachedChanged
       }
 
+
+      //return;
       console.log(objAgent);
       console.log(JSON.stringify(objAgent));
 
       this.AgentService.SaveAgent(objAgent).subscribe((data: any) => {
-        console.log(data);
+        console.log('Before -' + data);
 
         //this.getBanks();
 
 
         //this.router.navigate(['/', 'agent']);   substring(1, 4);
 
-        this.TempStr1 = data.substring(0 + 1, data.indexOf("|"));
-        this.TempStr2 = data.substring(data.indexOf("|") + 1, data.indexOf("||"));
 
-        this.AGT_CODE = this.TempStr1;
-        this.AGT_LEVEL_CODE = this.TempStr2;
+        //data = data.replace('|', '').replace('||', '').replace(this.TempStr1, '').replace(this.TempStr2, '');
 
-        data = data.replace('|', '').replace('||', '').replace(this.TempStr1, '').replace(this.TempStr2, '');
-
-        console.log(data);
 
         if (data.toString().replace(/"/g, '') != "Successfully Saved") {
-          alert(data);
+          alert('Successfully Saved');
           //this.FormControlStatusChange('LOAD'); //disabled controls after save
+
+          //12/12/2017
+          // this.TempStr1 = data.substring(0 + 1, data.indexOf("|"));
+          // this.TempStr2 = data.substring(data.indexOf("|") + 1, data.indexOf("||"));
+
+          // this.AGT_CODE = this.TempStr1;
+          // this.AGT_LEVEL_CODE = this.TempStr2;
+
           this.FormButtonStatusChange('SAVE');
+
+
+
+
+
+          //-------------Start TCS Update------------------------------------------------------------------------------------
+          if (this.isNewRecord) {
+
+            this.TempStr1 = data.substring(0 + 1, data.indexOf("|"));
+            this.TempStr2 = data.substring(data.indexOf("|") + 1, data.indexOf("||"));
+
+            this.AGT_CODE = this.TempStr1;
+            this.AGT_LEVEL_CODE = this.TempStr2;
+
+            this.SaveRecordTCS(objAgent, this.AGT_CODE);   //New Record
+          }
+          else {
+            this.UpdateRecordTCS(objAgent, this.AGT_CODE); //Update Record
+          }
+          //-------------Updte TCS Update------------------------------------------------------------------------------------
+
+
+
+
+
+          console.log(objAgent);
+
           return;
+
         } else {
           alert(data);
-          this.FormControlStatusChange('LOAD'); //disabled controls after save
-          this.FormButtonStatusChange('SAVE');
+          //this.FormControlStatusChange('LOAD'); //disabled controls after save
+
+          //this.FormButtonStatusChange('SAVE');
           return;
         }
 
@@ -1013,6 +1837,7 @@ export class AgentComponent implements OnInit {
     } else {
       this.AGT_APPOINT_DATE_CLS = "form-group"; //AgentTypeClass
     }
+
   }
 
 
@@ -1171,6 +1996,13 @@ export class AgentComponent implements OnInit {
     }
 
     if (this.AGT_FAX_NO == '') {
+      this.AGT_EMAIL_CLS = "has-error";
+      this.isAgentDetailsValid = false;
+    } else {
+      this.AGT_EMAIL_CLS = "form-group"; //AgentTypeClass
+    }
+
+    if (this.AGT_EMAIL == '') {
       this.AGT_FAX_NO_CLS = "has-error";
       this.isAgentDetailsValid = false;
     } else {
@@ -1488,7 +2320,6 @@ export class AgentComponent implements OnInit {
   //-----------End Validate fields--------------
   clearValues() {
 
-
     var moment = require('moment');
 
     this.AGT_ID = '';
@@ -1515,6 +2346,7 @@ export class AgentComponent implements OnInit {
     this.AGT_MOBILE = '-';
     this.AGT_TEL_NO = '-';
     this.AGT_FAX_NO = '-';
+    this.AGT_EMAIL = '-';
     this.AGT_BRANCH_CODE = '0';
     this.AGT_BANK_ID = 0;
     this.AGT_BANK_BRANCH_ID = 0;
@@ -1525,6 +2357,7 @@ export class AgentComponent implements OnInit {
     this.AGT_SLII_EXAM = 0;
     this.AGT_SLII_EXAM_DATE = null;
     this.AGT_AGMT_DATE_RECEIVED = null;
+
     this.AGT_AGMT_DATE_ISSUED = null;
     this.AGT_APP_DATE_RECEIVED = null;
     this.AGT_APP_DATE_ISSUED = null;
@@ -1629,8 +2462,22 @@ export class AgentComponent implements OnInit {
 
   }
 
-  setClickedRow = function (index, AGENT_ID) {
-    console.log(AGENT_ID);
+  CheckStringValues(vtext): string {
+
+    if ((vtext == '') || (vtext == null)) {
+      this.vText = '-';
+    } else {
+      this.vText = vtext;
+    }
+    return this.vText;
+  }
+
+
+
+  setClickedRow = function (index, AGENT_ID, AGT_CODE_SELECTED) {
+
+
+    console.log('setClickedRow - ' + AGENT_ID);
 
     this.AgentService.getAgentBySeqId(AGENT_ID)
       .subscribe((data) => {
@@ -1638,7 +2485,7 @@ export class AgentComponent implements OnInit {
 
         let obj: IAgent = JSON.parse(data);
 
-        this.AGT_SUB_CODE = obj.AGT_CODE;
+        //this.AGT_SUB_CODE = obj.AGT_CODE;
 
         var moment = require('moment');
 
@@ -1662,16 +2509,17 @@ export class AgentComponent implements OnInit {
           this.AGT_LANGUAGE = obj.AGT_LANGUAGE
         this.AGT_SUPER_CODE = obj.AGT_SUPER_CODE,
           this.AGT_TITLE = obj.AGT_TITLE,
-          this.AGT_FIRST_NAME = obj.AGT_FIRST_NAME,
-          this.AGT_LAST_NAME = obj.AGT_LAST_NAME,
-          this.AGT_ADD1 = obj.AGT_ADD1,
-          this.AGT_ADD2 = obj.AGT_ADD2,
-          this.AGT_ADD3 = obj.AGT_ADD3,
-          this.AGT_NIC_NO = obj.AGT_NIC_NO,
+          this.AGT_FIRST_NAME = this.CheckStringValues(obj.AGT_FIRST_NAME),
+          this.AGT_LAST_NAME = this.CheckStringValues(obj.AGT_LAST_NAME),
+          this.AGT_ADD1 = this.CheckStringValues(obj.AGT_ADD1),
+          this.AGT_ADD2 = this.CheckStringValues(obj.AGT_ADD2),
+          this.AGT_ADD3 = this.CheckStringValues(obj.AGT_ADD3),
+          this.AGT_NIC_NO = this.CheckStringValues(obj.AGT_NIC_NO),
           this.AGT_DOB = this.SetDateFormatNew(obj.AGT_DOB.toString());//moment(obj.AGT_DOB.toString().substr(0, 10), 'DD/MM/YYYY').toDate();
-        this.AGT_MOBILE = obj.AGT_MOBILE,
-          this.AGT_TEL_NO = obj.AGT_TEL_NO,
-          this.AGT_FAX_NO = obj.AGT_FAX_NO,
+        this.AGT_MOBILE = this.CheckStringValues(obj.AGT_MOBILE),
+          this.AGT_TEL_NO = this.CheckStringValues(obj.AGT_TEL_NO),
+          this.AGT_FAX_NO = this.CheckStringValues(obj.AGT_FAX_NO),
+          this.AGT_EMAIL = this.CheckStringValues(obj.AGT_EMAIL),
           this.AGT_BRANCH_CODE = obj.AGT_BRANCH_CODE,
           this.AGT_BANK_ID = obj.AGT_BANK_ID,
 
@@ -1679,7 +2527,7 @@ export class AgentComponent implements OnInit {
 
         this.AGT_BANK_BRANCH_ID = obj.AGT_BANK_BRANCH_ID,
 
-          this.AGT_BANK_ACC_NO = obj.AGT_BANK_ACC_NO,
+          this.AGT_BANK_ACC_NO = this.CheckStringValues(obj.AGT_BANK_ACC_NO),
           this.AGT_ID_ISSUED = obj.AGT_ID_ISSUED,
           this.AGT_ID_ISSUED_DATE = this.SetDateFormatNew(obj.AGT_ID_ISSUED_DATE.toString());
         this.AGT_APPOINT_DATE = this.SetDateFormatNew(obj.AGT_APPOINT_DATE.toString());
@@ -1696,20 +2544,20 @@ export class AgentComponent implements OnInit {
         this.AGT_TRNS_BRANCH_CODE = obj.AGT_TRNS_BRANCH_CODE,
           this.AGT_TRNS_BRANCH_DATE = this.SetDateFormatNew(obj.AGT_TRNS_BRANCH_DATE.toString());
         this.AGT_STOP_COMM_DATE = this.SetDateFormatNew(obj.AGT_STOP_COMM_DATE.toString());
-        this.AGT_STOP_COMM_REASON = obj.AGT_STOP_COMM_REASON,
+        this.AGT_STOP_COMM_REASON = this.CheckStringValues(obj.AGT_STOP_COMM_REASON),
           this.AGT_RELEASE_COMM_DATE = this.SetDateFormatNew(obj.AGT_RELEASE_COMM_DATE.toString());
-        this.AGT_RELEASE_COMM_REASON = obj.AGT_RELEASE_COMM_REASON,
-          this.AGT_CUSTOMER_COMPLAIN = obj.AGT_CUSTOMER_COMPLAIN,
+        this.AGT_RELEASE_COMM_REASON = this.CheckStringValues(obj.AGT_RELEASE_COMM_REASON),
+          this.AGT_CUSTOMER_COMPLAIN = this.CheckStringValues(obj.AGT_CUSTOMER_COMPLAIN),
           this.AGT_TERMINATE_NOTICE_DATE = this.SetDateFormatNew(obj.AGT_TERMINATE_NOTICE_DATE.toString());
         this.AGT_TERMINATE_DATE = this.SetDateFormatNew(obj.AGT_TERMINATE_DATE.toString());
         this.AGT_TERMINATE_REASON = obj.AGT_TERMINATE_REASON,
           this.AGT_BLACK_LISTED_DATE = this.SetDateFormatNew(obj.AGT_BLACK_LISTED_DATE.toString());
-        this.AGT_DUES_TO_COMPANY = obj.AGT_DUES_TO_COMPANY,
+        this.AGT_DUES_TO_COMPANY = this.CheckStringValues(obj.AGT_DUES_TO_COMPANY),
           this.AGT_REJOINED_DATE = this.SetDateFormatNew(obj.AGT_REJOINED_DATE.toString());
-        this.AGT_REMARKS = obj.AGT_REMARKS,
+        this.AGT_REMARKS = this.CheckStringValues(obj.AGT_REMARKS),
           this.AGT_BUSINESS_TYPE = obj.AGT_BUSINESS_TYPE,
-          this.AGT_LEVEL_CODE = obj.AGT_LEVEL_CODE,
-          this.AGT_LEADER_CODE = obj.AGT_LEADER_CODE,
+          this.AGT_LEVEL_CODE = this.CheckStringValues(obj.AGT_LEVEL_CODE),
+          this.AGT_LEADER_CODE = this.CheckStringValues(obj.AGT_LEADER_CODE),
           this.AGT_STATUS = obj.AGT_STATUS,
           this.AGT_TERMINATE_STATUS = obj.AGT_TERMINATE_STATUS,
           this.AGT_STOP_COMM_STATUS = obj.AGT_STOP_COMM_STATUS,
@@ -1721,17 +2569,18 @@ export class AgentComponent implements OnInit {
           this.AGT_RETAINER_AMOUNT = obj.AGT_RETAINER_AMOUNT,
           this.AGT_RETAINER_GIVEN_DATE = this.SetDateFormatNew(obj.AGT_RETAINER_GIVEN_DATE.toString());
         this.AGT_RETAINER_CLOSE_DATE = this.SetDateFormatNew(obj.AGT_RETAINER_CLOSE_DATE.toString());
-        this.AGT_LEADER_AGENT_CODE_V = obj.AGT_LEADER_AGENT_CODE_V,
-          this.AGT_LEADER_LEADER_CODE_V = obj.AGT_LEADER_LEADER_CODE_V,
+        this.AGT_LEADER_AGENT_CODE_V = this.CheckStringValues(obj.AGT_LEADER_AGENT_CODE_V),
+          this.AGT_LEADER_LEADER_CODE_V = this.CheckStringValues(obj.AGT_LEADER_LEADER_CODE_V),
           this.AGT_LEADER_AGENT_CODE_H = obj.AGT_LEADER_AGENT_CODE_H,
           this.AGT_LEADER_LEADER_CODE_H = obj.AGT_LEADER_LEADER_CODE_H,
           this.AGT_DESIGNATION_ID = obj.AGT_DESIGNATION_ID,
           this.AGT_HIERARCHY_TYPE_ID = obj.AGT_HIERARCHY_TYPE_ID,
           this.AGT_CHANGE_REASON_ID = obj.AGT_CHANGE_REASON_ID,
-          this.AGT_EFFECTIVE_DATE = obj.AGT_EFFECTIVE_DATE,
-          this.AGT_CHANGE_REASON = obj.AGT_CHANGE_REASON
+          this.AGT_EFFECTIVE_DATE = this.SetDateFormatNew(obj.AGT_EFFECTIVE_DATE.toString());
+        this.AGT_CHANGE_REASON = this.CheckStringValues(obj.AGT_CHANGE_REASON)
 
 
+        this.AGT_IMAGE = null;
 
         this.getProfilePicByAgentID(this.AGT_CODE);
 
@@ -1741,13 +2590,19 @@ export class AgentComponent implements OnInit {
 
         this.FormButtonStatusChange('GET');
 
+        this.getLeader_VProfilePicByAgentID(this.AGT_LEADER_AGENT_CODE_V);
+
         this.GetBranchTransferHistory(1);//Transfer Branch History
 
         this.GetStopCommissionHistory(2);//Stop Commission History
 
         this.GetReleaseCommissionHistory(3);//Release Commission History
 
-        console.log(obj);
+        this.getLeader_HProfilePicByAgentID(this.AGT_LEADER_AGENT_CODE_H);
+
+        this.getAttachedAgentsUploadDocByAgentID(this.AGT_CODE);
+
+        this.GetRecordTCS(AGT_CODE_SELECTED);
 
 
       },
@@ -1902,6 +2757,7 @@ export class AgentComponent implements OnInit {
       this.isAGT_MOBILEDisabled = false;
       this.isAGT_TEL_NODisabled = false;
       this.isAGT_FAX_NODisabled = false;
+      this.isAGT_EMAILDisabled = false;
       this.isAGT_BRANCH_CODEDisabled = false;
       this.isAGT_BANK_IDDisabled = false;
       this.isAGT_BANK_BRANCH_IDDisabled = false;
@@ -1976,6 +2832,7 @@ export class AgentComponent implements OnInit {
       this.isAGT_MOBILEDisabled = false;
       this.isAGT_TEL_NODisabled = false;
       this.isAGT_FAX_NODisabled = false;
+      this.isAGT_EMAILDisabled = false;
       this.isAGT_BRANCH_CODEDisabled = false;
       this.isAGT_BANK_IDDisabled = false;
       this.isAGT_BANK_BRANCH_IDDisabled = false;
@@ -2053,6 +2910,7 @@ export class AgentComponent implements OnInit {
       this.isAGT_MOBILEDisabled = true;
       this.isAGT_TEL_NODisabled = true;
       this.isAGT_FAX_NODisabled = true;
+      this.isAGT_EMAILDisabled = true;
       this.isAGT_BRANCH_CODEDisabled = true;
       this.isAGT_BANK_IDDisabled = true;
       this.isAGT_BANK_BRANCH_IDDisabled = true;

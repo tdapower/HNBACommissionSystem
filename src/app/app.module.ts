@@ -23,9 +23,14 @@ import { LevelService } from './shared/services/Level/level.service';
 import { UploadDocTypeService } from './shared/services/UploadDocType/upload-doc-type.service';
 import { UploadDocService } from './shared/services/UploadDoc/upload-doc.service';
 import { LanguageService } from './shared/services/Language/language.service';
-import { DesignationService } from './shared/services/Designation/designation.service';
+import { DesignationService } from './shared/services/designation/designation.service';
 import { ChangereasonService } from './shared/services/ChangeReason/changereason.service';
 import { AgentHistoryService } from './shared/services/AgentHistory/agent-history.service';
+import { LeaderCodeSearchService } from './shared/services/LeaderCodeSearch/leader-code-search.service';
+import { AgentAttachedService } from './shared/services/AgentAttached/agent-attached.service';
+import { ProductcategoryService } from './shared/services/ProductCategory/productcategory.service';
+import { ProductService } from './shared/services/Product/product.service';
+
 
 
 import { AgentComponent } from './pages/agent/agent.component';
@@ -41,6 +46,13 @@ import { SpinnerTopComponent } from './layout/spinner-top/spinner-top.component'
 import { MainDashboardComponent } from './pages/main-dashboard/main-dashboard/main-dashboard.component';
 import { Angular2FontawesomeModule } from 'angular2-fontawesome/angular2-fontawesome';
 import { ImageUploadComponent } from './pages/image-upload/image-upload.component';
+import { DesignationComponent } from './pages/designations/designation.component';
+import { ChangereasonComponent } from './pages/changereason/changereason.component';
+import { LevelComponent } from './pages/level/level.component';
+import { SummeryComponent } from './pages/summery/summery.component';
+import { ProductsComponent } from './pages/products/products.component';
+import { ProductCategoryComponent } from './pages/productcategory/productcategory.component';
+
 
 @NgModule({
   declarations: [
@@ -53,7 +65,13 @@ import { ImageUploadComponent } from './pages/image-upload/image-upload.componen
     SpinnerLargeComponent,
     SpinnerTopComponent,
     MainDashboardComponent,
-    ImageUploadComponent
+    ImageUploadComponent,
+    DesignationComponent,
+    ChangereasonComponent,
+    LevelComponent,
+    SummeryComponent,
+    ProductsComponent,
+    ProductCategoryComponent
   ],
   imports: [
     BrowserModule,
@@ -84,10 +102,13 @@ import { ImageUploadComponent } from './pages/image-upload/image-upload.componen
     UploadDocService,
     LanguageService,
     DesignationService,
+    AgentHistoryService,
+    LeaderCodeSearchService,
+    AgentAttachedService,
     ChangereasonService,
-    AgentHistoryService
+    ProductcategoryService,
+    ProductService
     ],
-
 
 
   bootstrap: [AppComponent]

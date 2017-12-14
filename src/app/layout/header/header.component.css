@@ -1,0 +1,14 @@
+.container{
+    width: 100%;
+}
+
+
+.dropdown-menu .divider {
+    height: 1px;
+    margin: 8.5px 0;
+    overflow: hidden;
+    background-color: #e5e5e5;
+  }
+
+/* .opacity{background-color: rgba(223, 236, 169, 0.39); opacity: 0.9;}  */
+.opacity{background-color: rgb(246, 244, 183);}

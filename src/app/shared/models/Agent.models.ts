@@ -23,6 +23,7 @@ export interface IAgent {
     AGT_MOBILE : string;
     AGT_TEL_NO : string;
     AGT_FAX_NO : string;
+    AGT_EMAIL : string;
     AGT_BRANCH_CODE : string;
     AGT_BANK_ID : number;
     AGT_BANK_BRANCH_ID : number;
@@ -76,5 +77,6 @@ export interface IAgent {
     AGT_CHANGE_REASON_ID: number;
     AGT_EFFECTIVE_DATE: Date;
     AGT_CHANGE_REASON: string;
+    AGT_IS_AGENT_ATTACHED_CHANGED: string;
 
 }
