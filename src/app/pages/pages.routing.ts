@@ -20,6 +20,13 @@ import { ProductsComponent } from './products/products.component';
 
 import { ProductCategoryComponent } from './productcategory/productcategory.component';
 
+import { CommissionRateChartComponent } from './commission-rate-chart/commission-rate-chart.component';
+
+import { OverridingRateChartComponent } from './overriding-rate-chart/overriding-rate-chart.component';
+
+import { ReturnRefundCancellationComponent } from './return-refund-cancellation/return-refund-cancellation.component';
+
+
 export const PAGE_ROUTES: Routes = [
     {
         path: '',
@@ -65,6 +72,17 @@ export const PAGE_ROUTES: Routes = [
     {
         path: 'productcategory',
         component: ProductCategoryComponent
+    },
+    {
+        path: 'commissionratechart',
+        component: CommissionRateChartComponent
+    },
+    {
+        path: 'overrridingratechart',
+        component: OverridingRateChartComponent
+    },
+    {
+        path: 'ReturnRefundCancellation',
+        component: ReturnRefundCancellationComponent
     }
-
 ];

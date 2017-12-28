@@ -30,6 +30,9 @@ import { LeaderCodeSearchService } from './shared/services/LeaderCodeSearch/lead
 import { AgentAttachedService } from './shared/services/AgentAttached/agent-attached.service';
 import { ProductcategoryService } from './shared/services/ProductCategory/productcategory.service';
 import { ProductService } from './shared/services/Product/product.service';
+import { PropertyService } from './shared/services/Property/property.service';
+import { CommissionRateChartService } from './shared/services/Commission-rate-chart/commission-rate-chart.service';
+import { CommissionORDRateChartService } from './shared/services/CommissionORD-rate-chart/commission-ord-rate-chart.service';
 
 
 
@@ -52,6 +55,11 @@ import { LevelComponent } from './pages/level/level.component';
 import { SummeryComponent } from './pages/summery/summery.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { ProductCategoryComponent } from './pages/productcategory/productcategory.component';
+import { CommissionRateChartComponent } from './pages/commission-rate-chart/commission-rate-chart.component';
+import { OverridingRateChartComponent } from './pages/overriding-rate-chart/overriding-rate-chart.component';
+import { ReturnRefundCancellationComponent } from './pages/return-refund-cancellation/return-refund-cancellation.component';
+
+
 
 
 @NgModule({
@@ -71,7 +79,11 @@ import { ProductCategoryComponent } from './pages/productcategory/productcategor
     LevelComponent,
     SummeryComponent,
     ProductsComponent,
-    ProductCategoryComponent
+    ProductCategoryComponent,
+    CommissionRateChartComponent,
+    OverridingRateChartComponent,
+    ReturnRefundCancellationComponent
+
   ],
   imports: [
     BrowserModule,
@@ -107,7 +119,10 @@ import { ProductCategoryComponent } from './pages/productcategory/productcategor
     AgentAttachedService,
     ChangereasonService,
     ProductcategoryService,
-    ProductService
+    ProductService,
+    PropertyService,
+    CommissionRateChartService,
+    CommissionORDRateChartService
     ],
 
 
