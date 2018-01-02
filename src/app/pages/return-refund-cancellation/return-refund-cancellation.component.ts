@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MomentModule } from 'angular2-moment';
+
+import { NKDatetimeModule } from 'ng2-datetime/ng2-datetime';
 
 @Component({
   selector: 'app-return-refund-cancellation',
@@ -7,6 +10,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ReturnRefundCancellationComponent implements OnInit {
 
+  datepickerOpts = {
+    format: 'dd/mm/yyyy'
+  }
+  
   constructor() { }
 
   ngOnInit() {

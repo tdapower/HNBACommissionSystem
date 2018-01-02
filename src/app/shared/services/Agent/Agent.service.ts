@@ -123,15 +123,18 @@ export class AgentService {
     headers.append('Authorization', USER.USER_AUTH_TOKEN);
     let options = new RequestOptions({ headers: headers });
 
+    console.log('let options = new RequestOptions({ headers: headers });');
 
     return this.http.get(URL_CONST.URL_PREFIX + 'api/Agent/GetAgentByID/' + SeqId, options)
       .map((response: Response) => JSON.stringify(response.json()))
       .catch((error: any) => {
         //this.handleError;
+
+        console.log(Observable.throw(new Error(error.status)));
+
         return Observable.throw(new Error(error.status))
       });
+      
   }
-
-
 
 }

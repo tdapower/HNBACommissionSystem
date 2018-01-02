@@ -1071,7 +1071,7 @@
               </div>
               <p class="control-label col-xs-5">Reason For Termination</p>
               <div class="col-xs-6">
-                <textarea class="form-control" [disabled]="isAGT_TERMINATE_REASONDisabled"  rows="3" id="comment" item-height="10px" [(ngModel)]="AGT_TERMINATE_REASON"
+                <textarea class="form-control" [disabled]="isAGT_TERMINATE_REASONDisabled" rows="3" id="comment" item-height="10px" [(ngModel)]="AGT_TERMINATE_REASON"
                   name="AGT_TERMINATE_REASON" id="AGT_TERMINATE_REASON" placeholder=""></textarea>
               </div>
             </div>
@@ -1857,10 +1857,18 @@
           </div>
           <div class="col-sm-2">
             <div class="form-group">
+
               <select type="text" class="form-control input-sm" placeholder="Document Type" [(ngModel)]="AGT_LEVEL_CODE" name="AGT_LEVEL_CODE"
-                id="AGT_LEVEL_CODE" required (ngModelChange)="onSelectOfUploadDocTypeId($event)">
+                id="AGT_LEVEL_CODE" required >
               <option *ngFor="let DocType of UploadDocTypeList" value={{DocType.DocTypeId}}>{{DocType.DocTypeName}}</option>
-              </select> </div>
+              </select>
+
+              <!-- <select type="text" class="form-control input-sm" placeholder="Document Type" [(ngModel)]="AGT_LEVEL_CODE" name="AGT_LEVEL_CODE"
+                id="AGT_LEVEL_CODE" required (ngModelChange)="onSelectOfUploadDocTypeId($event)">
+            <option *ngFor="let DocType of UploadDocTypeList" value={{DocType.DocTypeId}}>{{DocType.DocTypeName}}</option>
+            </select> -->
+
+            </div>
           </div>
 
           <div class="col-sm-1">

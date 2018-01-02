@@ -590,19 +590,35 @@ export class AgentComponent implements OnInit {
 
   startUpload() {
 
+    try {
 
-    if (this.AGT_CODE == '' || this.AGT_CODE == null) {
-      alert('Please Search and Select a ..!');
+      if (this.AGT_CODE == '' || this.AGT_CODE == null) {
+        alert('Please Select a party for upload.....');
+        return;
+      }
+
+      if (this.AGT_UPLOAD_DOC_DESC == '') {
+        alert('Please Fill the Description.....');
+        return;
+      }
+
+      if (this.AGT_LEVEL_CODE == '-') {
+        alert('Please Select the Type.....');
+        return;
+      }
+
+      this.inputUploadEvents.emit('startUpload');
+
+      this.getProfilePicByAgentID(this.AGT_CODE);
+
+      this.getUploadDocByAgentID(this.AGT_CODE);
+
+      alert('Successfully Uploaded....!');
 
     }
-
-    this.inputUploadEvents.emit('startUpload');
-
-    this.getProfilePicByAgentID(this.AGT_CODE);
-
-    this.getUploadDocByAgentID(this.AGT_CODE);
-
-    alert('Successfully Uploaded....!');
+    catch (error) {
+      alert(error);
+    }
 
   }
 
@@ -2419,6 +2435,7 @@ export class AgentComponent implements OnInit {
     this.AGT_SEARCH_MOBILE = '';
 
     this.AgentSearchList = null;
+
   }
 
   SearchRecord() {
@@ -2444,6 +2461,12 @@ export class AgentComponent implements OnInit {
         console.log(this.AgentSearchList);
 
         console.log(JSON.stringify(data));
+
+        if (this.AgentSearchList.length == 0) {
+          alert('No Record Found....');
+          this.AgentSearchList = null;
+          return;
+        }
 
       },
       (err) => console.log(err));
@@ -2482,6 +2505,8 @@ export class AgentComponent implements OnInit {
     this.AgentService.getAgentBySeqId(AGENT_ID)
       .subscribe((data) => {
         this.isLoading = false;
+
+        console.log('getAgentBySeqId Executed');
 
         let obj: IAgent = JSON.parse(data);
 
@@ -2604,6 +2629,7 @@ export class AgentComponent implements OnInit {
 
         this.GetRecordTCS(AGT_CODE_SELECTED);
 
+        console.log('End');
 
       },
       (err) => {
@@ -2638,7 +2664,6 @@ export class AgentComponent implements OnInit {
 
     this.FormButtonStatusChange('NEW');
   }
-
 
   EditRecord() {
     console.log('Edit Rec');
