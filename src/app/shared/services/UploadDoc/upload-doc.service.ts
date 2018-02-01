@@ -58,6 +58,25 @@ export class UploadDocService {
   }
 
 
+ 
+  getUploadDocByType(Type) {
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    headers.append('Authorization', USER.USER_AUTH_TOKEN);
+    let options = new RequestOptions({ headers: headers });
+    console.log('aaaaaaaaa');
+
+
+    return this.http.get(URL_CONST.URL_PREFIX + 'api/UploadDoc/getUploadDocByType?Type=' + Type, options)//'DPTSManualUpload'
+
+      .map((response: Response) => response.json())
+      .timeout(60000)
+      .catch((error: any) => {
+        //this.handleError; 
+        return Observable.throw(new Error(error.status))
+      });
+  }
+
+
 
 
   getAttachedAgentsUploadDocByAgentID(AgentCode) {

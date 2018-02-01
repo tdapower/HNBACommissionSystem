@@ -7,4 +7,6 @@ errorCode:string  ;
 errorMessage:string  ;
 sessionId:string  ;
 actionEvent:string  ;
+newPassWord:string  ;
+confirmNewPassWord:string  ;
  }

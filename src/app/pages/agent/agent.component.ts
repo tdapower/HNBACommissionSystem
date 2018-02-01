@@ -64,6 +64,11 @@ import { NgUploaderOptions, UploadedFile, UploadRejected } from 'ngx-uploader';
 
 import { URL_CONST } from '../../shared/config/url.constants';
 
+import { COMMON_VALUES } from '../../shared/config/commonValues';
+
+import { Pipe, PipeTransform } from '@angular/core';
+
+
 declare var jQuery: any;
 
 @Component({
@@ -433,6 +438,8 @@ export class AgentComponent implements OnInit {
 
 
   TestString: string = "";
+
+  CurrentDate: string;
 
 
   datepickerOpts = {
@@ -884,14 +891,16 @@ export class AgentComponent implements OnInit {
       //alert('CheckTCSAuth Called');
 
       let objTCS: ITCSAuth = {
-        userCode: 'JANAKATEST',
-        passWord: 'test@2017',
-        branchCode: 'HDO',
-        roleCode: 'SUPERUSER',
+        userCode: COMMON_VALUES.TCS_LOGIN_USER,
+        passWord: COMMON_VALUES.TCS_LOGIN_PWD,
+        branchCode: COMMON_VALUES.TCS_LOGIN_BRANCH_CODE,
+        roleCode: COMMON_VALUES.TCS_LOGIN_ROLE_CODE,
         errorCode: '',
         errorMessage: '',
         sessionId: '',
-        actionEvent: 'LOGIN'
+        actionEvent: 'LOGIN',
+        newPassWord: '',
+        confirmNewPassWord: ''
       }
 
       this.AgentService.checkTCSAuth(objTCS)
@@ -907,7 +916,7 @@ export class AgentComponent implements OnInit {
           resolve(obj.sessionId);
 
         }, (err) => {
-          console.error('err', err);
+          console.log('err', err);
           reject(err);
         });
 
@@ -927,12 +936,16 @@ export class AgentComponent implements OnInit {
 
       this.GetTCSAuth('', '', '', '').then((sessionId) => {
 
+
+        this.CurrentDate = new Date().toLocaleDateString();
+        this.CurrentDate = this.CurrentDate + ' ' +  new Date().toLocaleTimeString();
+
         let obj: IAgentTCS = {
           userCode: "JANAKATEST",
           errorCode: "",
           roleCode: "SUPERUSER",
           errorMessage: "",
-          sessionId: "nFmHhqqBW5TC8PnGdlG28B0nTmfZQ1LqtQLGcGpcYq67ClcS6N3T!-1906674343!1512745569592",//this.TCS_SESSION_ID,
+          sessionId: sessionId,//this.TCS_SESSION_ID,
           actionEvent: "ADDPARTY",
           partycode: this.AGT_CODE,
           partytype: "I", //ASK TCS
@@ -951,7 +964,7 @@ export class AgentComponent implements OnInit {
           nationality: "SRILANKAN",
           occupation: "RETIRED", //ASK TCS
           parentpartycode: "",
-          startdate: "23/11/2017 05:10:00",
+          startdate: this.CurrentDate,//"23/11/2017 05:10:00",
           stakeCodeSet:
           [
             {
@@ -1097,7 +1110,7 @@ export class AgentComponent implements OnInit {
           mailingaddressline3: this.AGT_ADD3,
           mailingcitylocation: "ADD_CHENAI",
           mailingprovince: "AP",
-          countrycode: "EASTERN",
+          countrycode: "EASTERN",// "EASTERN",
           mailingzipcode: "700154",
           mailingfax: "",
           mailingphonework: "0887895563",
@@ -1158,13 +1171,29 @@ export class AgentComponent implements OnInit {
 
         console.log('XXX ' + this.TCS_SESSION_ID);
 
+        //
+        //this.CurrentDate = moment(Date.now());
+        
+        // this.CurrentDate = moment().format('do/mm/yyyy hh:mm:ss');
+        // this.CurrentDate = moment.toString();
+        // this.CurrentDate = moment.now('dd/mm/yyyy');
+
+
+        this.CurrentDate = new Date().toLocaleDateString();
+        this.CurrentDate = this.CurrentDate + ' ' +  new Date().toLocaleTimeString();
+
+        //this.CurrentDate = this.CurrentDate + ' ' +  new Date().toTimeString() + new Date().toUTCString() + new Date().getTime();
+
+        // var datePipe = new DatePipe("");//var datePipe = new DatePipe("en-US");
+        // this.CurrentDate = datePipe.transform(this.CurrentDate, 'dd/MM/yyyy hh:mm:ss');
+
 
         let obj: IAgentTCS = {
           userCode: "JANAKATEST",
           errorCode: "",
           roleCode: "SUPERUSER",
           errorMessage: "",
-          sessionId: this.TCS_SESSION_ID,
+          sessionId: sessionId,
           actionEvent: "MODIFYPARTY",
           partycode: this.AGT_CODE,
           partytype: "I", //ASK TCS
@@ -1175,15 +1204,15 @@ export class AgentComponent implements OnInit {
           businessname: "HNB ASSURANCE PLC",
           registrationno: "PQ108",
           registrationdate: "01/01/1900",
-          typeoforganization: "O",
+          typeoforganization: "",//o
           title: "MR", //ASK TCS
           nicno: this.AGT_NIC_NO,
-          sicno: "1234567890",
+          sicno: "",
           sex: "M", //ASK TCS
           nationality: "SRILANKAN",
           occupation: "RETIRED", //ASK TCS
           parentpartycode: "",
-          startdate: "23/11/2017 05:10:00",
+          startdate: this.CurrentDate,//"23/11/2017 05:11:00", 
           stakeCodeSet:
           [
             {
@@ -1329,7 +1358,7 @@ export class AgentComponent implements OnInit {
           mailingaddressline3: this.AGT_ADD3,
           mailingcitylocation: "ADD_CHENAI",
           mailingprovince: "AP",
-          countrycode: "EASTERN",
+          countrycode: "EASTERN",//EASTERN",
           mailingzipcode: "700154",
           mailingfax: "",
           mailingphonework: "0887895563",
@@ -1342,10 +1371,10 @@ export class AgentComponent implements OnInit {
           permanentaddress1: this.AGT_ADD1,
           permanentaddress2: this.AGT_ADD2,
           permanentaddress3: this.AGT_ADD3,
-          permanentcitylocation: "colombo",
-          permanentprovince: "western",
-          permanentcountrycode: "5555",
-          permanentzipcode: "",
+          permanentcitylocation: "ADD_CHENAI",
+          permanentprovince: "AP",
+          permanentcountrycode: "EASTERN",
+          permanentzipcode: "700154",
           permanentfaxno: "",
           permanentphonework: "",
           permanentphonecell: "",
@@ -1354,8 +1383,8 @@ export class AgentComponent implements OnInit {
           permanentemail2: this.AGT_EMAIL,
           permanentemail3: this.AGT_EMAIL,
           partyStatus: "",
-          searchResMaxRange: null,
-          searchResMinRange: null,
+          searchResMaxRange: "40",
+          searchResMinRange: "1",
           permanentadddeleteind: "",
           mailingadddeleteind: ""
         }
@@ -1852,6 +1881,13 @@ export class AgentComponent implements OnInit {
       this.isAgentDetailsValid = false;
     } else {
       this.AGT_APPOINT_DATE_CLS = "form-group"; //AgentTypeClass
+    }
+
+    if (this.AGT_BUSINESS_TYPE == 0) {
+      this.AGT_BUSINESS_TYPE_CLS = "has-error";
+      this.isAgentDetailsValid = false;
+    } else {
+      this.AGT_BUSINESS_TYPE_CLS = "form-group"; //AgentTypeClass
     }
 
   }

@@ -1274,25 +1274,32 @@
             </form>
 
 
+
+
+            
+
             <form class="form-horizontal">
-              <div class="row">
-                <!--<div class="{{AGT_BUSINESS_TYPE_CLS}}">-->
-                <div class="form-group">
-                  <!--<div class="col-xs-0">
+            <div class="row">
+              <div class="{{AGT_BUSINESS_TYPE_CLS}}">
+                <!-- <div class="form-group"> -->
+                <!--<div class="col-xs-0">
                   </div>-->
-                  <p class="control-label col-xs-6">Bussiness Type</p>
-                  <div class="col-xs-6">
-                    <select class="form-control" [disabled]="isAGT_BUSINESS_TYPEDisabled" [(ngModel)]="AGT_BUSINESS_TYPE" name="AGT_BUSINESS_TYPE"
-                      id="AGT_BUSINESS_TYPE" required>
+                <p class="control-label col-xs-6">Bussiness Type</p>
+                <div class="col-xs-6">
+                  <select class="form-control" [disabled]="isAGT_BUSINESS_TYPEDisabled" [(ngModel)]="AGT_BUSINESS_TYPE" name="AGT_BUSINESS_TYPE"
+                    id="AGT_BUSINESS_TYPE" required>
                     <option value="0">SELECT</option>
                     <option value="1">LIFE</option>
                     <option value="2">GENERAL</option>
                     <option value="3">BOTH</option>
                 </select>
-                  </div>
                 </div>
               </div>
+            </div>
             </form>
+
+
+
 
 
             <form class="form-horizontal">
@@ -1859,7 +1866,7 @@
             <div class="form-group">
 
               <select type="text" class="form-control input-sm" placeholder="Document Type" [(ngModel)]="AGT_LEVEL_CODE" name="AGT_LEVEL_CODE"
-                id="AGT_LEVEL_CODE" required >
+                id="AGT_LEVEL_CODE" required>
               <option *ngFor="let DocType of UploadDocTypeList" value={{DocType.DocTypeId}}>{{DocType.DocTypeName}}</option>
               </select>
 
@@ -2097,23 +2104,75 @@
         <div class="col-sm-2">
         </div>
         <div class="col-sm-8">
-          <div class="well">
-            <div class="row">
+          <div class="panel panel-default">
+            <div class="panel-heading">Agent Details - TCS</div>
+            <div class="panel-body">
 
-              <div class="col-sm-2">
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-0">
+                  </div>
+                  <p class="control-label col-xs-2">Code</p>
+                  <div class="col-xs-5">
+                    <input type="text" class="form-control" id="AGT_CODE_TCS" [(ngModel)]="AGT_CODE_TCS" placeholder="">
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-0">
+                  </div>
+                  <p class="control-label col-xs-2">Name</p>
+                  <div class="col-xs-7">
+                    <input type="text" class="form-control" id="AGT_NAME_TCS" [(ngModel)]="AGT_NAME_TCS" placeholder="">
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="row">
+                <div class="form-group">
+                  <div class="col-xs-0">
+                  </div>
+                  <p class="control-label col-xs-2">Status</p>
+                  <div class="col-xs-5">
+                    <input type="text" class="form-control" id="AGT_STATUS_TCS" [(ngModel)]="AGT_STATUS_TCS" placeholder="">
+                  </div>
+                </div>
+              </div>
+
+
+
+              <!-- <div class="row">
+              <p class="col-sm-2">Agent Code</p>
+              <div class="col-sm-3">
                 <input type="text" class="form-control" disabled id="AGT_CODE_TCS" [(ngModel)]="AGT_CODE_TCS" placeholder="Agent Name">
               </div>
 
+            </div>
+
+            <div class="row">
+                <p class="control-label col-xs-2">Agent Name</p>
               <div class="col-sm-8">
                 <input type="text" class="form-control" disabled id="AGT_NAME_TCS" [(ngModel)]="AGT_NAME_TCS" placeholder="Agent Address">
               </div>
+            </div>
 
+            <div class="row">
+                <p class="control-label col-xs-2">Agent Status</p>
               <div class="col-sm-2">
                 <input type="text" class="form-control" disabled id="AGT_STATUS_TCS" [(ngModel)]="AGT_STATUS_TCS" placeholder="Agent Address">
               </div>
+            </div> -->
 
             </div>
           </div>
+
+
+
         </div>
 
         <div class="col-sm-2">

@@ -83,13 +83,13 @@ export class ChangereasonComponent implements OnInit {
           alert('Error saving Change Reason');
         } else {
           console.log("Change Reason Successfully Saved.");
-          alert('Change Reason Successfully Saved.');
+          alert("Successfully Saved.");
         }
       },
         (err) => {
           console.log(err);
           console.log("Error saving Change Reason");
-          alert('Error saving Change Reason');
+          alert("Error Occured.");
         },
         () => console.log('done'));
 

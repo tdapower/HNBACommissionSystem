@@ -33,6 +33,10 @@ import { ProductService } from './shared/services/Product/product.service';
 import { PropertyService } from './shared/services/Property/property.service';
 import { CommissionRateChartService } from './shared/services/Commission-rate-chart/commission-rate-chart.service';
 import { CommissionORDRateChartService } from './shared/services/CommissionORD-rate-chart/commission-ord-rate-chart.service';
+import { PIDSearchService } from './shared/services/PIDSearch/pidsearch.service';
+import { PIDDetailsService } from './shared/services/PIDDetails/piddetails.service';
+import { RefundService } from './shared/services/Refund/refund.service';
+
 
 
 
@@ -58,6 +62,9 @@ import { ProductCategoryComponent } from './pages/productcategory/productcategor
 import { CommissionRateChartComponent } from './pages/commission-rate-chart/commission-rate-chart.component';
 import { OverridingRateChartComponent } from './pages/overriding-rate-chart/overriding-rate-chart.component';
 import { ReturnRefundCancellationComponent } from './pages/return-refund-cancellation/return-refund-cancellation.component';
+import { ReturnRefundCancellationConfirmComponent } from './pages/return-refund-cancellation-confirm/return-refund-cancellation-confirm.component';
+import { ManualUploadsComponent } from './pages/manual-uploads/manual-uploads.component';
+import { ManualUploadsReceiptsComponent } from './pages/manual-uploads-receipts/manual-uploads-receipts.component';
 
 
 
@@ -82,7 +89,10 @@ import { ReturnRefundCancellationComponent } from './pages/return-refund-cancell
     ProductCategoryComponent,
     CommissionRateChartComponent,
     OverridingRateChartComponent,
-    ReturnRefundCancellationComponent
+    ReturnRefundCancellationComponent,
+    ReturnRefundCancellationConfirmComponent,
+    ManualUploadsComponent,
+    ManualUploadsReceiptsComponent
 
   ],
   imports: [
@@ -122,7 +132,10 @@ import { ReturnRefundCancellationComponent } from './pages/return-refund-cancell
     ProductService,
     PropertyService,
     CommissionRateChartService,
-    CommissionORDRateChartService
+    CommissionORDRateChartService,
+    PIDSearchService,
+    PIDDetailsService,
+    RefundService
     ],
 
 

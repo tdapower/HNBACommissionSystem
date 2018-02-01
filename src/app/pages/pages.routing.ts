@@ -26,6 +26,13 @@ import { OverridingRateChartComponent } from './overriding-rate-chart/overriding
 
 import { ReturnRefundCancellationComponent } from './return-refund-cancellation/return-refund-cancellation.component';
 
+import { ReturnRefundCancellationConfirmComponent } from './return-refund-cancellation-confirm/return-refund-cancellation-confirm.component';
+
+import { ManualUploadsComponent } from './manual-uploads/manual-uploads.component';
+
+import { ManualUploadsReceiptsComponent } from './manual-uploads-receipts/manual-uploads-receipts.component';
+
+
 
 export const PAGE_ROUTES: Routes = [
     {
@@ -84,5 +91,19 @@ export const PAGE_ROUTES: Routes = [
     {
         path: 'ReturnRefundCancellation',
         component: ReturnRefundCancellationComponent
+    },
+    {
+        path: 'ReturnRefundCancellationConfirm',
+        component: ReturnRefundCancellationConfirmComponent
+    },
+    {
+        path:'ManualUploadsComponent',
+        component: ManualUploadsComponent
+    },
+    {
+        path:'ManualUploadsReceiptsComponent',
+        component: ManualUploadsReceiptsComponent
     }
+    
+
 ];

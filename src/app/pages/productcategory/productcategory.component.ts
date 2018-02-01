@@ -86,13 +86,16 @@ export class ProductCategoryComponent implements OnInit {
   
           if (data.toString().replace(/"/g, '') == "ERROR") {
             console.log("Error saving Designation");
+            alert("Error Occured.");
           } else {
             console.log("Designation Successfully Saved.");
+            alert("Successfully Saved.");
           }
         },
           (err) => {
             console.log(err);
             console.log("Error saving Designation");
+            alert("Error Occured.");
           },
           () => console.log('done'));
   

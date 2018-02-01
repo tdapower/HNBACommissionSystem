@@ -81,20 +81,6 @@ export class AgentService {
 
 
   GetAgentSearchDetails(params) {
-    //   let body = params;
-    //   let headers = new Headers({ 'Content-Type': 'application/json' });
-    //   headers.append('Authorization', USER.USER_AUTH_TOKEN);
-    //   let postoptions = new RequestOptions({ headers: headers });
-
-    //   console.log(body);
-    //   console.log(JSON.stringify(body));
-
-    // return this.http.post(URL_CONST.URL_PREFIX + 'api/AgentSearch/GetSearchAgents=' + body, postoptions)
-    //   .map((response: Response) => response.json());
-
-
-
-
 
     let body = params;
     let headers = new Headers({ 'Content-Type': 'application/json' });
@@ -110,8 +96,6 @@ export class AgentService {
         //this.handleError;
         return Observable.throw(new Error(error.status))
       });
-
-
   }
 
 

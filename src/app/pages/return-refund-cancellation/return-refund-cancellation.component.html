@@ -9,12 +9,13 @@
   <div class="col-sm-2">
     <form class="form-horizontal">
       <div class="row">
-        <div class="{{CODE_CLS}}">
+        <div class="{{PID_RECEIPT_NO_CLS}}">
           <!-- <div class="col-xs-0">
                     </div> -->
           <!-- <p class="control-label col-xs-5">Receipt No.</p> -->
           <div class="col-xs-12">
-            <input type="text" placeholder="Receipt No." class="form-control" [(ngModel)]="CODE" name="CODE" id="CODE">
+            <input type="text" placeholder="Receipt No." class="form-control" [(ngModel)]="PID_RECEIPT_NO_SEARCH" name="PID_RECEIPT_NO_SEARCH"
+              id="PID_RECEIPT_NO_SEARCH">
           </div>
         </div>
       </div>
@@ -27,12 +28,13 @@
 
     <form class="form-horizontal">
       <div class="row">
-        <div class="{{CODE_CLS}}">
+        <div class="{{PID_AGT_CODE_CLS}}">
           <!-- <div class="col-xs-0">
                     </div> -->
           <!-- <p class="control-label col-xs-5">Receipt No.</p> -->
           <div class="col-xs-12">
-            <input type="text" placeholder="Agent Code." class="form-control" [(ngModel)]="CODE" name="CODE" id="CODE">
+            <input type="text" placeholder="Agent Code." class="form-control" [(ngModel)]="PID_AGT_CODE_SEARCH" name="PID_AGT_CODE_SEARCH"
+              id="PID_AGT_CODE_SEARCH">
           </div>
         </div>
       </div>
@@ -44,12 +46,13 @@
     </div>
     <form class="form-horizontal">
       <div class="row">
-        <div class="{{CODE_CLS}}">
+        <div class="{{PID_PROPOSAL_NO_CLS}}">
           <!-- <div class="col-xs-0">
                     </div> -->
           <!-- <p class="control-label col-xs-5">Receipt No.</p> -->
           <div class="col-xs-12">
-            <input type="text" placeholder="Proposal No." class="form-control" [(ngModel)]="CODE" name="CODE" id="CODE">
+            <input type="text" placeholder="Proposal No." class="form-control" [(ngModel)]="PID_PROPOSAL_NO_SEARCH" name="PID_PROPOSAL_NO_SEARCH"
+              id="PID_PROPOSAL_NO_SEARCH">
           </div>
         </div>
       </div>
@@ -60,12 +63,13 @@
     </div>
     <form class="form-horizontal">
       <div class="row">
-        <div class="{{CODE_CLS}}">
+        <div class="{{PID_POLICY_NO_CLS}}">
           <!-- <div class="col-xs-0">
                     </div> -->
           <!-- <p class="control-label col-xs-5">Receipt No.</p> -->
           <div class="col-xs-12">
-            <input type="text" placeholder="Policy No." class="form-control" [(ngModel)]="CODE" name="CODE" id="CODE">
+            <input type="text" placeholder="Policy No." class="form-control" [(ngModel)]="PID_POLICY_NO_SEARCH" name="PID_POLICY_NO_SEARCH"
+              id="PID_POLICY_NO_SEARCH">
           </div>
         </div>
       </div>
@@ -81,7 +85,7 @@
       <div class="row">
         <div class="{{CODE_CLS}}">
           <div class="col-xs-12">
-            <button type="button" [disabled]="isNEWDisabled" (click)="NewRecord()" class="btn orange-flat-button">Search</button>
+            <button type="button" (click)="SearchRecord()" class="btn orange-flat-button">Search</button>
           </div>
         </div>
       </div>
@@ -98,7 +102,7 @@
       <div class="row">
         <div class="{{CODE_CLS}}">
           <div class="col-xs-12">
-            <button type="button" [disabled]="isNEWDisabled" (click)="NewRecord()" class="btn orange-flat-button">Clear</button>
+            <button type="button" (click)="ClearSearch()" class="btn orange-flat-button">Clear</button>
           </div>
         </div>
       </div>
@@ -117,44 +121,71 @@
           <thead>
             <tr>
               <th>View</th>
-              <th style="display:none;">ID</th>
-              <th>DATE</th>
-              <th>CUS.NAME.</th>
-              <th>RECEP.AMT.</th>
-              <th>TIME SLAB</th>
-              <th>CONFIRM.AMT.</th>
-              <th>CONFIRM.DATE.</th>
-              <th>RV. No.</th>
-              <th>BAL.TYPE.</th>
+              <th style="display:none;">PID_RECEIPT_NO</th>
+              <th>RECEIPT NO</th>
+              <th>RECEIPT_AMT</th>
+              <th>RECEIPT DATE</th>
+              <th>PROPOSAL NO</th>
+              <th>POLICY NO</th>
+              <th>CUS. NAME</th>
+              <th>AGT CODE</th>
+
+
+              <!-- <th>RECEIPT DATE</th>
+              <th>CUS. NAME</th>
+              <th>PROPOSAL NO</th>
+              <th>POLICY NO</th>
+              <th>RECEIPT_AMT</th>
+              <th>TIME_SLAB</th>
+              <th>CONFIRM_AMT</th>
+              <th>CONFIRM_DATE</th>
+              <th>RV_NO</th>
+              <th>BAL_TYPE</th>
+              <th>AGT_CODE</th> -->
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let ORD of ORDRateChartList | paginate: {itemsPerPage:5 , currentPage:page, id: '1'}; let i = index" (click)="setORDRateID(i,ORD.Id);">
+            <tr *ngFor="let ORD of PIDList | paginate: {itemsPerPage:5 , currentPage:page, id: '1'}; let i = index" (click)="setPIDReceiptNo(i,ORD.PID_RECEIPT_NO);">
               <td><a href="javascript:void(0)">View</a></td>
               <td style="display:none;">
-                {{ORD.Id}}
+                {{ORD.PID_RECEIPT_NO}}
               </td>
               <td>
-                {{ORD.Code}}
+                {{ORD.PID_RECEIPT_NO}}
               </td>
               <td>
-                {{ORD.Description}}
+                {{ORD.PID_RECEIPT_AMT}}
               </td>
               <td>
-                {{ORD.AgtTypeId}}
+                {{ORD.PID_RECEIPT_DATE}}
               </td>
               <td>
-                {{ORD.ComLevelId}}
+                {{ORD.PID_PROPOSAL_NO}}
               </td>
               <td>
-                {{ORD.Rate}}
+                {{ORD.PID_POLICY_NO}}
+              </td>
+
+              <td>
+                {{ORD.PID_CUSTOMER}}
               </td>
               <td>
-                {{ORD.FromDate}}
+                {{ORD.PID_AGT_CODE}}
+              </td>
+
+              <!-- <td>
+                {{ORD.PID_TIME_SLAB}}
               </td>
               <td>
-                {{ORD.ToDate}}
+                {{ORD.PID_CONFIRM_AMT}}
               </td>
+              <td>
+                {{ORD.PID_CONFIRM_DATE}}
+              </td>
+              <td>
+                {{ORD.PID_RV_NO}}
+              </td> -->
+
             </tr>
           </tbody>
 
@@ -197,7 +228,8 @@
                   </div>
                   <p class="control-label col-xs-6">Total Amount</p>
                   <div class="col-xs-6">
-                    <input type="text" class="form-control" [(ngModel)]="DESCRIPTION" name="DESCRIPTION" id="DESCRIPTION" placeholder="">
+                    <input type="text" disabled="true" class="form-control" [(ngModel)]="PID_RECEIPT_AMT" name="PID_RECEIPT_AMT" id="PID_RECEIPT_AMT"
+                      placeholder="">
                   </div>
                 </div>
               </div>
@@ -210,7 +242,8 @@
                   </div>
                   <p class="control-label col-xs-6">Available Amount</p>
                   <div class="col-xs-6">
-                    <input type="text" class="form-control" [(ngModel)]="DESCRIPTION" name="DESCRIPTION" id="DESCRIPTION" placeholder="">
+                    <input type="text" disabled="true" class="form-control" [(ngModel)]="PID_AVAILABLE_AMT" name="PID_AVAILABLE_AMT" id="PID_AVAILABLE_AMT"
+                      placeholder="">
                   </div>
                 </div>
               </div>
@@ -218,12 +251,12 @@
 
             <form class="form-horizontal">
               <div class="row">
-                <div class="form-group">
+                <div class={{RFD_AMT_CLS}}>
                   <div class="col-xs-0">
                   </div>
                   <p class="control-label col-xs-6">Amount</p>
                   <div class="col-xs-6">
-                    <input type="text" class="form-control" [(ngModel)]="DESCRIPTION" name="DESCRIPTION" id="DESCRIPTION" placeholder="">
+                    <input type="text" class="form-control" [(ngModel)]="RFD_AMT" name="RFD_AMT" id="RFD_AMT" placeholder="">
                   </div>
                 </div>
               </div>
@@ -233,36 +266,6 @@
 
 
           <div class="col-sm-4">
-
-            <form class="form-horizontal">
-              <div class="row">
-                <div class="form-group">
-                  <div class="col-xs-0">
-                  </div>
-                  <p class="control-label col-xs-6">Refund %</p>
-                  <div class="col-xs-6">
-                    <input type="text" class="form-control" [(ngModel)]="DESCRIPTION" name="DESCRIPTION" id="DESCRIPTION" placeholder="">
-                  </div>
-                </div>
-              </div>
-            </form>
-
-
-            <form class="form-horizontal">
-              <div class="row">
-                <div class="form-group">
-                  <div class="col-xs-0">
-                  </div>
-                  <p class="control-label col-xs-6">Type</p>
-                  <div class="col-xs-6">
-                    <select class="form-control" [(ngModel)]="ACTIVE_STATUS" name="ACTIVE_STATUS" id="ACTIVE_STATUS">
-                              <option value="1">ACTIVE</option>
-                              <option value="0">INACTIVE</option>
-                          </select>
-                  </div>
-                </div>
-              </div>
-            </form>
 
 
             <form class="form-horizontal">
@@ -272,7 +275,45 @@
                   </div>
                   <p class="control-label col-xs-6">PV Number</p>
                   <div class="col-xs-6">
-                    <input type="text" class="form-control" [(ngModel)]="DESCRIPTION" name="DESCRIPTION" id="DESCRIPTION" placeholder="">
+                    <input type="text" disabled="true" class="form-control" [(ngModel)]="RFD_PV_NO" name="RFD_PV_NO" id="RFD_PV_NO" placeholder="">
+                  </div>
+                </div>
+              </div>
+            </form>
+
+
+            <form class="form-horizontal">
+              <div class="row">
+                <div class={{RFD_TYPE_CLS}}>
+                  <div class="col-xs-0">
+                  </div>
+                  <p class="control-label col-xs-6">Type</p>
+                  <div class="col-xs-6">
+                    <select class="form-control" [(ngModel)]="RFD_TYPE" name="RFD_TYPE" id="RFD_TYPE">
+                              <option value="0">-</option>
+                              <option value="1">CHEQUE RETURN</option>
+                              <option value="2">REFUND</option>
+                              <option value="3">CANCELLATION</option>
+                          </select>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <div class="row">
+              <div class="form-group">
+              </div>
+            </div>
+
+            <form class="form-horizontal">
+              <div class="row">
+                <div class={{RFD_CANCELLATION_FEE_CLS}}>
+                  <div class="col-xs-0">
+                  </div>
+                  <p class="control-label col-xs-6">Cancellation Fee</p>
+                  <div class="col-xs-6">
+                    <input type="text" class="form-control" [(ngModel)]="RFD_CANCELLATION_FEE" name="RFD_CANCELLATION_FEE" id="RFD_CANCELLATION_FEE"
+                      placeholder="">
                   </div>
                 </div>
               </div>
@@ -285,16 +326,16 @@
 
             <form class="form-horizontal">
               <div class="row">
-                <div class={{DATE_TO_CLS}}>
+                <div class={{RFD_REFUND_DATE_CLS}}>
                   <div class="col-xs-0">
                   </div>
-                  <p class="control-label col-xs-5">Date To</p>
+                  <p class="control-label col-xs-5">Date</p>
                   <div class="col-xs-7">
 
                     <span *ngIf=true>
             
-                                      <datetime name="date" [readonly]="false" item-height="50px" [disabled]="isAGT_APPOINT_DATEDisabled" id="DATE_TO" [datepicker]="datepickerOpts"
-                                      [(ngModel)]="DATE_TO" [timepicker]="false"></datetime>
+                                      <datetime name="date" [readonly]="false" item-height="50px" [disabled]="isAGT_APPOINT_DATEDisabled" id="RFD_REFUND_DATE" [datepicker]="datepickerOpts"
+                                      [(ngModel)]="RFD_REFUND_DATE" [timepicker]="false"></datetime>
                 
                                   </span>
 
@@ -320,27 +361,42 @@
             <div class="col-sm-4">
               <form class="form-horizontal">
                 <div class="row">
-                  <div class="form-group">
+                  <div class={{RFD_ADVICE_REF_CLS}}>
                     <div class="col-xs-0">
                     </div>
                     <p class="control-label col-xs-6">Advice Ref.</p>
                     <div class="col-xs-6">
-                      <input type="text" class="form-control" [(ngModel)]="DESCRIPTION" name="DESCRIPTION" id="DESCRIPTION" placeholder="">
+                      <input type="text" class="form-control" [(ngModel)]="RFD_ADVICE_REF" name="RFD_ADVICE_REF" id="RFD_ADVICE_REF" placeholder="">
                     </div>
                   </div>
                 </div>
               </form>
             </div>
 
-            <div class="col-sm-8">
+            <div class="col-sm-4">
+              <form class="form-horizontal">
+                <div class="row">
+                  <div class={{RFD_RECOVERY_FEE_CLS}}>
+                    <div class="col-xs-0">
+                    </div>
+                    <p class="control-label col-xs-6">Recovery Fee</p>
+                    <div class="col-xs-6">
+                      <input type="text" class="form-control" [(ngModel)]="RFD_RECOVERY_FEE" name="RFD_RECOVERY_FEE" id="RFD_RECOVERY_FEE" placeholder="">
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="col-sm-12">
               <form class="form-horizontal">
                 <div class="row">
                   <div class="form-group">
                     <div class="col-xs-0">
                     </div>
-                    <p class="control-label col-xs-3">Narration</p>
-                    <div class="col-xs-9">
-                      <input type="text" class="form-control" [(ngModel)]="DESCRIPTION" name="DESCRIPTION" id="DESCRIPTION" placeholder="">
+                    <p class="control-label col-xs-2">Narration</p>
+                    <div class="col-xs-10">
+                      <input type="text" class="form-control" [(ngModel)]="RFD_REASON" name="RFD_REASON" id="RFD_REASON" placeholder="">
                     </div>
                   </div>
                 </div>
@@ -381,7 +437,7 @@
     <div class="form-group">
 
       <div class="panel panel-default">
-        <div class="panel-heading">Refund Receipt Details1</div>
+        <div class="panel-heading">Refund Receipt Details</div>
         <div class="panel-body">
         </div>
       </div>
@@ -391,7 +447,7 @@
     <div class="form-group">
 
       <div class="panel panel-default">
-        <div class="panel-heading">Refund Receipt Details2</div>
+        <div class="panel-heading">Commission Details</div>
         <div class="panel-body">
         </div>
       </div>
@@ -401,7 +457,7 @@
     <div class="form-group">
 
       <div class="panel panel-default">
-        <div class="panel-heading">Refund Receipt Details3</div>
+        <div class="panel-heading">Commission Refund Details</div>
         <div class="panel-body">
         </div>
       </div>
@@ -411,7 +467,7 @@
     <div class="form-group">
 
       <div class="panel panel-default">
-        <div class="panel-heading">Refund Receipt Details3</div>
+        <div class="panel-heading">New Refund Details</div>
         <div class="panel-body">
         </div>
       </div>

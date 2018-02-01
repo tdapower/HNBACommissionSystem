@@ -50,13 +50,16 @@ export class BankComponent implements OnInit {
 
         if (data.toString().replace(/"/g, '') == "ERROR") {
           console.log("Error saving quotation");
+          alert("Error saving quotation");
         } else {
           console.log("Quotation Successfully Saved.");
+          alert("Successfully Saved.");
         }
       },
         (err) => {
           console.log(err);
-          console.log("Error saving quotation");
+          console.log("Error Occured");
+          alert("Error Occured");
         },
         () => console.log('done'));
 

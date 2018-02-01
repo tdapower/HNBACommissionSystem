@@ -30,3 +30,7 @@
     background-color: #ECEF9C;
     border-color: #ECF024;
 }
+
+input:focus {
+  background-color:#F8F8EB;
+}
